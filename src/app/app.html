@@ -42,31 +42,8 @@
     </section>
   }
 
-  <div class="segmentado" role="group" aria-label="Instrumento">
-    @for (opcao of instrumentos; track opcao.id) {
-      <button
-        type="button"
-        class="segmentado__opcao"
-        [class.segmentado__opcao--ativa]="instrumentoId() === opcao.id"
-        [attr.aria-pressed]="instrumentoId() === opcao.id"
-        (click)="trocarInstrumento(opcao.id)"
-      >
-        {{ opcao.nome }}
-      </button>
-    }
-  </div>
-
-  <label class="campo">
-    <span class="campo__rotulo">Afinação</span>
-    <select class="campo__select" (change)="trocarAfinacao($event)">
-      @for (opcao of instrumento().afinacoes; track opcao.id) {
-        <option [value]="opcao.id" [selected]="afinacaoId() === opcao.id">{{ opcao.nome }}</option>
-      }
-    </select>
-  </label>
-
   <section class="painel" [class.painel--afinado]="afinado()">
-    <app-medidor [cents]="desvio()" [afinado]="afinado()" />
+    <app-medidor class="painel__medidor" [cents]="desvio()" [afinado]="afinado()" />
 
     <div class="leitura">
       @if (notaAlvo(); as nota) {
@@ -91,50 +68,80 @@
     </div>
   </section>
 
-  <app-seletor-cordas
-    [cordas]="cordasExibidas()"
-    [automatico]="automatico()"
-    (escolher)="escolherCorda($event)"
-    (voltarParaAutomatico)="ligarAutomatico()"
-  />
+  <div class="lateral">
+    <div class="escolhas">
+      <div class="segmentado" role="group" aria-label="Instrumento">
+        @for (opcao of instrumentos; track opcao.id) {
+          <button
+            type="button"
+            class="segmentado__opcao"
+            [class.segmentado__opcao--ativa]="instrumentoId() === opcao.id"
+            [attr.aria-pressed]="instrumentoId() === opcao.id"
+            (click)="trocarInstrumento(opcao.id)"
+          >
+            {{ opcao.nome }}
+          </button>
+        }
+      </div>
 
-  <div class="acoes">
-    <button
-      type="button"
-      class="botao botao--principal"
-      [class.botao--parar]="ouvindo()"
-      [disabled]="iniciando()"
-      (click)="alternarMicrofone()"
-    >
-      @if (iniciando()) {
-        Abrindo o microfone…
-      } @else if (ouvindo()) {
-        Parar de ouvir
-      } @else {
-        Ativar microfone
-      }
-    </button>
-
-    <button
-      type="button"
-      class="botao botao--secundario"
-      [class.botao--tocando]="tocandoReferencia()"
-      [disabled]="!cordaAlvo()"
-      (click)="alternarReferencia()"
-    >
-      {{ tocandoReferencia() ? 'Parar a nota' : 'Tocar a nota de referência' }}
-    </button>
-  </div>
-
-  @if (ouvindo()) {
-    <div class="nivel" aria-hidden="true">
-      <div class="nivel__barra" [style.width.%]="volume() * 100"></div>
+      <label class="campo">
+        <span class="campo__rotulo">Afinação</span>
+        <select class="campo__select" (change)="trocarAfinacao($event)">
+          @for (opcao of instrumento().afinacoes; track opcao.id) {
+            <option [value]="opcao.id" [selected]="afinacaoId() === opcao.id">
+              {{ opcao.nome }}
+            </option>
+          }
+        </select>
+      </label>
     </div>
-  }
+    <div class="controles">
+      <app-seletor-cordas
+        [cordas]="cordasExibidas()"
+        [automatico]="automatico()"
+        (escolher)="escolherCorda($event)"
+        (voltarParaAutomatico)="ligarAutomatico()"
+      />
 
-  @if (mensagemErro(); as erro) {
-    <p class="erro" role="alert">{{ erro }}</p>
-  }
+      <div class="acoes">
+        <button
+          type="button"
+          class="botao botao--principal"
+          [class.botao--parar]="ouvindo()"
+          [disabled]="iniciando()"
+          (click)="alternarMicrofone()"
+        >
+          @if (iniciando()) {
+            Abrindo o microfone…
+          } @else if (ouvindo()) {
+            Parar de ouvir
+          } @else {
+            Ativar microfone
+          }
+        </button>
+
+        <button
+          type="button"
+          class="botao botao--secundario"
+          [class.botao--tocando]="tocandoReferencia()"
+          [disabled]="!cordaAlvo()"
+          (click)="alternarReferencia()"
+        >
+          {{ tocandoReferencia() ? 'Parar a nota' : 'Tocar a nota de referência' }}
+        </button>
+      </div>
+
+      @if (ouvindo()) {
+        <div class="nivel" aria-hidden="true">
+          <div class="nivel__barra" [style.width.%]="volume() * 100"></div>
+        </div>
+      }
+
+      @if (mensagemErro(); as erro) {
+        <p class="erro" role="alert">{{ erro }}</p>
+      }
+    </div>
+  </div>
 
   <footer class="rodape">
     <p>

@@ -3,16 +3,42 @@
 }
 
 .tela {
-  display: flex;
-  flex-direction: column;
-  gap: 0.75rem;
+  --espaco: clamp(0.7rem, 1.6vmin, 1.15rem);
+  --margem: clamp(0.85rem, 2.2vmin, 1.6rem);
+
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  grid-template-areas:
+    'cabecalho'
+    'ajustes'
+    'escolhas'
+    'painel'
+    'controles'
+    'rodape';
+  /* `safe` protege telas baixas: se o conteúdo não couber, ele volta a
+     alinhar pelo topo em vez de sangrar para fora dos dois lados. */
+  align-content: safe center;
+  gap: var(--espaco);
   width: 100%;
+  min-height: 100dvh;
   max-width: 30rem;
   margin: 0 auto;
-  padding: 1rem 1rem calc(1.5rem + env(safe-area-inset-bottom));
+  padding: var(--margem);
+  padding-bottom: calc(var(--margem) + env(safe-area-inset-bottom));
+}
+
+/* Item de grid nasce com `min-width: auto`, ou seja, o tamanho min-content do
+   conteúdo. Basta o <select> de afinação ter uma opção longa para ele empurrar
+   a coluna além da faixa e a página ganhar rolagem horizontal. */
+.tela > *,
+.lateral > *,
+.escolhas > *,
+.controles > * {
+  min-width: 0;
 }
 
 .cabecalho {
+  grid-area: cabecalho;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -21,7 +47,7 @@
 
 .cabecalho__titulo {
   margin: 0;
-  font-size: 1.15rem;
+  font-size: clamp(1.15rem, 2.6vmin, 1.6rem);
   font-weight: 600;
   letter-spacing: 0.01em;
 }
@@ -32,7 +58,7 @@
   border-radius: 999px;
   background: transparent;
   color: var(--texto-fraco);
-  font-size: 0.78rem;
+  font-size: clamp(0.78rem, 1.7vmin, 0.92rem);
   font-variant-numeric: tabular-nums;
   cursor: pointer;
 }
@@ -43,6 +69,7 @@
 }
 
 .ajustes {
+  grid-area: ajustes;
   padding: 0.8rem;
   border: 1px solid var(--traco);
   border-radius: 1rem;
@@ -57,6 +84,7 @@
 
 .ajustes__controles {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
   gap: 0.6rem;
 }
@@ -96,6 +124,20 @@
   cursor: pointer;
 }
 
+/* No estreito o agrupador some do layout e escolhas/controles voltam a ser
+   itens diretos do grid, cada um na sua área — é o que mantém a ordem do
+   celular (seletor, medidor, cordas) com o medidor no meio dos dois. */
+.lateral {
+  display: contents;
+}
+
+.escolhas {
+  grid-area: escolhas;
+  display: grid;
+  align-content: start;
+  gap: var(--espaco);
+}
+
 .segmentado {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -107,12 +149,12 @@
 }
 
 .segmentado__opcao {
-  padding: 0.6rem 0.5rem;
+  padding: clamp(0.6rem, 1.5vmin, 0.85rem) 0.5rem;
   border: none;
   border-radius: 999px;
   background: transparent;
   color: var(--texto-fraco);
-  font-size: 0.92rem;
+  font-size: clamp(0.92rem, 2vmin, 1.1rem);
   font-weight: 550;
   cursor: pointer;
   transition:
@@ -138,23 +180,27 @@
 
 .campo__rotulo {
   color: var(--texto-fraco);
-  font-size: 0.8rem;
+  font-size: clamp(0.8rem, 1.7vmin, 0.92rem);
   white-space: nowrap;
 }
 
 .campo__select {
   flex: 1;
   min-width: 0;
-  padding: 0.4rem 0.5rem;
+  padding: 0.45rem 0.5rem;
   border: none;
   border-radius: 0.6rem;
   background: var(--superficie-alta);
   color: var(--texto);
-  font-size: 0.88rem;
+  font-size: clamp(0.88rem, 1.9vmin, 1rem);
 }
 
 .painel {
-  padding: 1rem 1rem 1.1rem;
+  grid-area: painel;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: clamp(1rem, 2.4vmin, 1.75rem) clamp(1rem, 2vmin, 1.5rem);
   border: 1px solid var(--traco);
   border-radius: 1.5rem;
   background: var(--superficie);
@@ -165,6 +211,14 @@
   border-color: color-mix(in srgb, var(--acento) 50%, transparent);
 }
 
+/* O medidor tem proporção 320:170. Amarrar a largura à altura disponível é o
+   que impede o ponteiro de virar uma faixa gigante em paisagem, onde sobra
+   largura e falta altura. */
+.painel__medidor {
+  width: min(100%, calc(36dvh * 1.88));
+  margin-inline: auto;
+}
+
 .leitura {
   margin-top: 0.4rem;
   text-align: center;
@@ -172,7 +226,7 @@
 
 .leitura__cifra {
   margin: 0;
-  font-size: 3.2rem;
+  font-size: clamp(3.2rem, 10vmin, 5.5rem);
   font-weight: 300;
   line-height: 1;
   letter-spacing: -0.03em;
@@ -192,7 +246,7 @@
 .leitura__nome {
   margin: 0.1rem 0 0;
   color: var(--texto-fraco);
-  font-size: 0.9rem;
+  font-size: clamp(0.9rem, 1.9vmin, 1.05rem);
   letter-spacing: 0.06em;
   text-transform: uppercase;
 }
@@ -204,7 +258,7 @@
   gap: 0.5rem;
   margin: 0.7rem 0 0;
   color: var(--texto-fraco);
-  font-size: 0.88rem;
+  font-size: clamp(0.88rem, 1.9vmin, 1.05rem);
   font-variant-numeric: tabular-nums;
 }
 
@@ -215,7 +269,7 @@
 
 .leitura__instrucao {
   margin: 0.55rem 0 0;
-  font-size: 1rem;
+  font-size: clamp(1rem, 2.3vmin, 1.35rem);
   font-weight: 550;
   color: var(--alerta);
   transition: color 200ms ease;
@@ -225,19 +279,28 @@
   color: var(--acento);
 }
 
+.controles {
+  grid-area: controles;
+  display: grid;
+  align-content: start;
+  gap: var(--espaco);
+}
+
 .acoes {
-  display: flex;
-  flex-direction: column;
+  /* auto-fit resolve sozinho o empilhar/lado-a-lado, sem breakpoint próprio:
+     o que manda é a largura da coluna, não a do dispositivo. */
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(12rem, 1fr));
   gap: 0.5rem;
-  margin-top: 0.15rem;
 }
 
 .botao {
-  padding: 0.85rem 1rem;
+  padding: clamp(0.85rem, 1.9vmin, 1.1rem) 1rem;
   border: 1px solid transparent;
   border-radius: 999px;
-  font-size: 0.95rem;
+  font-size: clamp(0.95rem, 1.8vmin, 1.05rem);
   font-weight: 600;
+  text-wrap: balance;
   cursor: pointer;
   transition:
     background-color 180ms ease,
@@ -302,9 +365,11 @@
 }
 
 .rodape {
-  margin-top: 0.25rem;
+  grid-area: rodape;
+  max-width: 44rem;
+  margin-inline: auto;
   color: var(--texto-fraco);
-  font-size: 0.76rem;
+  font-size: clamp(0.76rem, 1.6vmin, 0.88rem);
   text-align: center;
 }
 
@@ -312,12 +377,93 @@
   margin: 0;
 }
 
-@media (min-width: 26rem) {
-  .acoes {
-    flex-direction: row-reverse;
+/* Tablet em pé continua numa coluna só — mas larga. Duas colunas estreitas
+   ali desperdiçam a altura de sobra e encolhem o medidor sem motivo. */
+@media (min-width: 40rem) {
+  .tela {
+    max-width: 40rem;
+  }
+}
+
+/* Duas colunas quando a largura é o recurso abundante: qualquer tela deitada
+   a partir de 40rem, e telas grandes em qualquer orientação. O critério é a
+   proporção, não a largura pura — é ela que diz qual eixo está sobrando. */
+@media (min-aspect-ratio: 1 / 1) and (min-width: 40rem), (min-width: 62rem) {
+  .tela {
+    grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr);
+    grid-template-areas:
+      'cabecalho cabecalho'
+      'ajustes   ajustes'
+      'painel    lateral'
+      'rodape    rodape';
+    max-width: 64rem;
+    column-gap: clamp(1rem, 3vmin, 2rem);
+  }
+
+  /* Aqui o agrupador vira a coluna de verdade: uma pilha só, sem linha de
+     grid entre escolhas e controles para abrir vão quando o painel é o mais
+     alto dos dois. */
+  .lateral {
+    display: flex;
+    flex-direction: column;
+    grid-area: lateral;
+    gap: var(--espaco);
+    min-width: 0;
+  }
+}
+
+/* Celular deitado: sobra largura e falta altura, então o que encolhe é o
+   eixo vertical — medidor mais baixo e tipografia sem o piso do retrato. */
+@media (orientation: landscape) and (max-height: 32rem) {
+  .tela {
+    --espaco: 0.5rem;
+    --margem: 0.7rem;
+  }
+
+  .painel {
+    padding: 0.75rem 0.9rem;
+  }
+
+  .painel__medidor {
+    width: min(100%, calc(32dvh * 1.88));
+  }
+
+  .leitura {
+    margin-top: 0.2rem;
+  }
+
+  .leitura__cifra {
+    font-size: 2.5rem;
+  }
+
+  .leitura__numeros {
+    margin-top: 0.4rem;
+  }
+
+  .leitura__instrucao {
+    margin-top: 0.3rem;
+    font-size: 0.95rem;
+  }
+
+  /* A dica de rodapé é redundante com o próprio medidor, e numa tela de 320
+     a 390 px de altura esses ~26 px são a diferença entre caber e rolar. */
+  .rodape {
+    display: none;
+  }
+
+  .cabecalho__titulo {
+    font-size: 1rem;
+  }
+
+  .segmentado__opcao {
+    padding: 0.45rem 0.5rem;
+  }
+
+  .campo {
+    padding: 0.35rem 0.35rem 0.35rem 0.75rem;
   }
 
   .botao {
-    flex: 1;
+    padding: 0.6rem 0.9rem;
   }
 }

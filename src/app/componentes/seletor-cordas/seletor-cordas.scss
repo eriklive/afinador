@@ -5,7 +5,7 @@
 .cordas {
   display: grid;
   grid-template-columns: repeat(var(--colunas, 6), 1fr);
-  gap: 0.5rem;
+  gap: clamp(0.4rem, 1.2vmin, 0.65rem);
 }
 
 .corda {
@@ -14,7 +14,7 @@
   flex-direction: column;
   align-items: center;
   gap: 0.1rem;
-  padding: 0.6rem 0.15rem 0.5rem;
+  padding: clamp(0.55rem, 1.4vmin, 0.9rem) 0.15rem clamp(0.45rem, 1.2vmin, 0.8rem);
   border: 1px solid var(--traco);
   border-radius: 0.9rem;
   background: var(--superficie-alta);
@@ -33,7 +33,7 @@
 }
 
 .corda__cifra {
-  font-size: 1.15rem;
+  font-size: clamp(1.15rem, 2.5vmin, 1.55rem);
   font-weight: 650;
   line-height: 1;
   letter-spacing: -0.01em;
@@ -46,7 +46,7 @@
 }
 
 .corda__nome {
-  font-size: 0.66rem;
+  font-size: clamp(0.66rem, 1.4vmin, 0.82rem);
   letter-spacing: 0.02em;
   opacity: 0.75;
 }
@@ -82,14 +82,14 @@
   justify-content: center;
   gap: 0.5rem;
   width: 100%;
-  margin-top: 0.7rem;
-  padding: 0.55rem 0.75rem;
+  margin-top: clamp(0.6rem, 1.5vmin, 0.9rem);
+  padding: clamp(0.55rem, 1.4vmin, 0.8rem) 0.75rem;
   border: 1px solid var(--traco);
   border-radius: 999px;
   background: transparent;
   color: var(--texto-fraco);
   font: inherit;
-  font-size: 0.82rem;
+  font-size: clamp(0.82rem, 1.8vmin, 0.95rem);
   cursor: pointer;
   transition:
     border-color 160ms ease,
@@ -112,4 +112,16 @@
 .auto--ligado .auto__ponto {
   background: var(--acento);
   box-shadow: 0 0 8px color-mix(in srgb, var(--acento) 70%, transparent);
+}
+
+/* Celular deitado: cada milímetro vertical conta. */
+@media (orientation: landscape) and (max-height: 32rem) {
+  .corda {
+    padding: 0.4rem 0.15rem 0.35rem;
+  }
+
+  .auto {
+    margin-top: 0.45rem;
+    padding: 0.4rem 0.75rem;
+  }
 }
