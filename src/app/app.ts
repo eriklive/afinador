@@ -63,7 +63,8 @@ export class App {
 
   protected readonly estado = this.microfone.estado;
   protected readonly mensagemErro = this.microfone.mensagemErro;
-  protected readonly volume = this.microfone.volume;
+  protected readonly nivel = this.microfone.nivel;
+  protected readonly sinal = this.microfone.sinal;
   protected readonly tocandoReferencia = this.tomReferencia.tocando;
 
   protected readonly ouvindo = computed(() => this.estado() === 'ouvindo');
@@ -156,15 +157,22 @@ export class App {
     return `${cents > 0 ? '+' : '−'}${Math.abs(cents)} ¢`;
   });
 
+  /** Altura da barra de nível, em porcentagem. */
+  protected readonly nivelBarra = computed(() => Math.min(100, this.nivel() * 1400));
+
   /** Instrução principal mostrada abaixo da nota. */
   protected readonly instrucao = computed(() => {
     if (!this.ouvindo()) return 'Ative o microfone para começar';
     if (this.tocandoReferencia()) return 'Tocando a nota de referência';
+
     const desvio = this.desvio();
     if (desvio === null) {
+      // Separa os dois motivos de não haver nota: microfone sem som nenhum
+      // (permissão, aparelho mudo) ou som chegando sem altura definida.
+      if (this.sinal() === 'mudo') return 'Nenhum som chegando ao microfone';
       return this.automatico()
-        ? 'Toque uma corda solta'
-        : `Toque a ${this.cordaAlvo()?.numero ?? ''}ª corda`;
+        ? 'Ouvindo — toque uma corda solta'
+        : `Ouvindo — toque a ${this.cordaAlvo()?.numero ?? ''}ª corda`;
     }
     if (Math.abs(desvio) <= TOLERANCIA_CENTS) return 'Afinada';
     return desvio < 0 ? 'Aperte a corda' : 'Afrouxe a corda';

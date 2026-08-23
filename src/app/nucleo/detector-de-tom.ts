@@ -35,8 +35,11 @@ const PADRAO: Required<OpcoesDeteccao> = {
   // Abaixo do D2 do drop D (73,4 Hz) com folga, e acima do A4 do ukulele.
   frequenciaMinima: 60,
   frequenciaMaxima: 1200,
-  limiarRms: 0.008,
-  limiarClareza: 0.82,
+  // Afrouxados de propósito em relação ao "livro": corda de violão captada
+  // pelo microfone de um celular, com ganho automático desligado, chega bem
+  // mais baixa e mais suja que um tom sintético.
+  limiarRms: 0.004,
+  limiarClareza: 0.75,
 };
 
 /** Fração do pico máximo do NSDF a partir da qual um pico já serve. */

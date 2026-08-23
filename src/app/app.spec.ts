@@ -1,5 +1,6 @@
 import { TestBed } from '@angular/core/testing';
 import { App } from './app';
+import { Microfone } from './nucleo/microfone';
 
 async function montar() {
   const fixture = TestBed.createComponent(App);
@@ -67,6 +68,48 @@ describe('App', () => {
     expect(elemento.querySelector('.ajustes__valor')?.textContent).toContain('439');
     // Calibrar reinicia a seleção, então a leitura volta ao estado sem corda.
     expect(elemento.querySelector('.leitura__numeros')?.textContent).not.toBe(antes);
+  });
+
+  describe('diagnóstico da escuta', () => {
+    // Sem separar estes dois casos, "não pegou a corda" é indistinguível de
+    // "microfone morto" — foi exatamente o que aconteceu em campo.
+    it('avisa quando o microfone está aberto mas não chega som', async () => {
+      const microfone = TestBed.inject(Microfone);
+      const fixture = await montar();
+      microfone.estado.set('ouvindo');
+      microfone.nivel.set(0);
+      await fixture.whenStable();
+
+      const elemento = fixture.nativeElement as HTMLElement;
+      expect(elemento.querySelector('.leitura__instrucao')?.textContent).toContain(
+        'Nenhum som chegando',
+      );
+    });
+
+    it('avisa quando chega som mas nenhuma nota fecha', async () => {
+      const microfone = TestBed.inject(Microfone);
+      const fixture = await montar();
+      microfone.estado.set('ouvindo');
+      microfone.nivel.set(0.05);
+      await fixture.whenStable();
+
+      const elemento = fixture.nativeElement as HTMLElement;
+      expect(elemento.querySelector('.leitura__instrucao')?.textContent).toContain('Ouvindo');
+    });
+
+    it('a barra de nível acompanha o volume mesmo sem nota', async () => {
+      const microfone = TestBed.inject(Microfone);
+      const fixture = await montar();
+      microfone.estado.set('ouvindo');
+      microfone.nivel.set(0.05);
+      await fixture.whenStable();
+
+      const barra = (fixture.nativeElement as HTMLElement).querySelector<HTMLElement>(
+        '.nivel__barra',
+      );
+      expect(barra).not.toBeNull();
+      expect(parseFloat(barra!.style.width)).toBeGreaterThan(0);
+    });
   });
 
   it('mostra o instrumento pedido no seletor de afinações', async () => {

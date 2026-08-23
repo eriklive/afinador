@@ -33,6 +33,14 @@ O caminho do som até o ponteiro está em `src/app/nucleo/`:
    periodicidade do sinal e inviabilizam a detecção. Em seguida filtra a entrada (passa-alta em
    55 Hz, passa-baixa em 1300 Hz) para sobrar a faixa das fundamentais, e analisa uma janela de
    4096 amostras a cada 45 ms.
+
+   Duas armadilhas de Safari estão resolvidas aqui e têm teste próprio: o `AudioContext` é criado
+   **antes** do primeiro `await` (criado depois, ele nasce suspenso e o analisador só devolve
+   zeros, sem erro nenhum), e a cadeia termina num ganho zero ligado ao `destination` (o Safari
+   pode não alimentar um analisador pendurado no vácuo). O nível RMS é medido a cada quadro
+   independentemente da detecção, para a tela conseguir dizer _"nenhum som chegando ao
+   microfone"_ em vez de simplesmente não reagir.
+
 2. **`detector-de-tom.ts`** estima a fundamental pelo método McLeod (NSDF). Autocorrelação crua
    erra a oitava com frequência em corda dedilhada, porque o 2º harmônico rende um pico tão alto
    quanto o da fundamental; a normalização do NSDF mais a escolha do _primeiro_ pico acima de 90%
@@ -49,7 +57,7 @@ O caminho do som até o ponteiro está em `src/app/nucleo/`:
 ```bash
 npm install
 npm start          # http://localhost:4200
-npm test           # 44 testes de unidade e de componente
+npm test           # 58 testes de unidade e de componente
 npm run build      # saída em dist/afinador/browser
 ```
 

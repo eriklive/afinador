@@ -34,6 +34,17 @@ function ruido(): Float32Array {
   return amostras;
 }
 
+/** Corda fraca e com chiado — o que um microfone de celular realmente entrega. */
+function tomRealista(frequencia: number, ganho: number, ruidoRelativo: number): Float32Array {
+  const limpo = tom(frequencia, [0.35, 1, 0.7, 0.45, 0.28, 0.16, 0.09]);
+  const chiado = ruido();
+  const amostras = new Float32Array(TAMANHO);
+  for (let i = 0; i < TAMANHO; i++) {
+    amostras[i] = limpo[i] * ganho + chiado[i] * ganho * ruidoRelativo;
+  }
+  return amostras;
+}
+
 function desvioEmCents(frequencia: number, amplitudes?: readonly number[]): number {
   const leitura = detectarFrequencia(tom(frequencia, amplitudes), TAXA);
   expect(leitura).not.toBeNull();
@@ -68,6 +79,18 @@ describe('detectarFrequencia', () => {
   it('reporta clareza alta para um tom puro', () => {
     const leitura = detectarFrequencia(tom(196, [1]), TAXA);
     expect(leitura!.clareza).toBeGreaterThan(0.95);
+  });
+
+  it('acha a corda mesmo fraca e com chiado', () => {
+    // Com ganho automático desligado, corda de violão captada por celular
+    // chega bem mais baixa e mais suja que um tom sintético. Os limiares do
+    // detector existem para esta faixa, não para o laboratório.
+    // RMS ≈ 0,006: abaixo do limiar de laboratório e dentro do que um celular
+    // com ganho automático desligado entrega de verdade.
+    const amostras = tomRealista(82.41, 0.03, 0.15);
+    const leitura = detectarFrequencia(amostras, TAXA);
+    expect(leitura).not.toBeNull();
+    expect(Math.abs(centsEntre(leitura!.frequencia, 82.41))).toBeLessThan(5);
   });
 
   it('devolve null no silêncio', () => {
