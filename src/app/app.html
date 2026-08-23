@@ -1,0 +1,145 @@
+<div class="tela">
+  <header class="cabecalho">
+    <h1 class="cabecalho__titulo">Afinador</h1>
+    <button
+      type="button"
+      class="diapasao"
+      [class.diapasao--aberto]="ajustesAbertos()"
+      [attr.aria-expanded]="ajustesAbertos()"
+      (click)="alternarAjustes()"
+    >
+      Lá = {{ a4() }} Hz
+    </button>
+  </header>
+
+  @if (ajustesAbertos()) {
+    <section class="ajustes" aria-label="Calibração do diapasão">
+      <p class="ajustes__texto">
+        Referência do Lá 4. Mantenha em 440&nbsp;Hz para tocar com outros instrumentos.
+      </p>
+      <div class="ajustes__controles">
+        <button
+          type="button"
+          class="passo"
+          [disabled]="a4() <= a4Minimo"
+          aria-label="Diminuir um hertz"
+          (click)="ajustarA4(-1)"
+        >
+          −
+        </button>
+        <span class="ajustes__valor">{{ a4() }} Hz</span>
+        <button
+          type="button"
+          class="passo"
+          [disabled]="a4() >= a4Maximo"
+          aria-label="Aumentar um hertz"
+          (click)="ajustarA4(1)"
+        >
+          +
+        </button>
+        <button type="button" class="ajustes__voltar" (click)="redefinirA4()">Padrão</button>
+      </div>
+    </section>
+  }
+
+  <div class="segmentado" role="group" aria-label="Instrumento">
+    @for (opcao of instrumentos; track opcao.id) {
+      <button
+        type="button"
+        class="segmentado__opcao"
+        [class.segmentado__opcao--ativa]="instrumentoId() === opcao.id"
+        [attr.aria-pressed]="instrumentoId() === opcao.id"
+        (click)="trocarInstrumento(opcao.id)"
+      >
+        {{ opcao.nome }}
+      </button>
+    }
+  </div>
+
+  <label class="campo">
+    <span class="campo__rotulo">Afinação</span>
+    <select class="campo__select" (change)="trocarAfinacao($event)">
+      @for (opcao of instrumento().afinacoes; track opcao.id) {
+        <option [value]="opcao.id" [selected]="afinacaoId() === opcao.id">{{ opcao.nome }}</option>
+      }
+    </select>
+  </label>
+
+  <section class="painel" [class.painel--afinado]="afinado()">
+    <app-medidor [cents]="desvio()" [afinado]="afinado()" />
+
+    <div class="leitura">
+      @if (notaAlvo(); as nota) {
+        <p class="leitura__cifra">
+          {{ nota.cifra }}<span class="leitura__oitava">{{ nota.oitava }}</span>
+        </p>
+        <p class="leitura__nome">{{ nota.nome }}</p>
+      } @else {
+        <p class="leitura__cifra leitura__cifra--vazia">–</p>
+        <p class="leitura__nome">Nenhuma corda</p>
+      }
+
+      <p class="leitura__numeros">
+        <span>{{ textoFrequencia() }}</span>
+        <span class="leitura__separador" aria-hidden="true">·</span>
+        <span class="leitura__desvio">{{ textoDesvio() }}</span>
+      </p>
+
+      <p class="leitura__instrucao" [class.leitura__instrucao--afinado]="afinado()" role="status">
+        {{ instrucao() }}
+      </p>
+    </div>
+  </section>
+
+  <app-seletor-cordas
+    [cordas]="cordasExibidas()"
+    [automatico]="automatico()"
+    (escolher)="escolherCorda($event)"
+    (voltarParaAutomatico)="ligarAutomatico()"
+  />
+
+  <div class="acoes">
+    <button
+      type="button"
+      class="botao botao--principal"
+      [class.botao--parar]="ouvindo()"
+      [disabled]="iniciando()"
+      (click)="alternarMicrofone()"
+    >
+      @if (iniciando()) {
+        Abrindo o microfone…
+      } @else if (ouvindo()) {
+        Parar de ouvir
+      } @else {
+        Ativar microfone
+      }
+    </button>
+
+    <button
+      type="button"
+      class="botao botao--secundario"
+      [class.botao--tocando]="tocandoReferencia()"
+      [disabled]="!cordaAlvo()"
+      (click)="alternarReferencia()"
+    >
+      {{ tocandoReferencia() ? 'Parar a nota' : 'Tocar a nota de referência' }}
+    </button>
+  </div>
+
+  @if (ouvindo()) {
+    <div class="nivel" aria-hidden="true">
+      <div class="nivel__barra" [style.width.%]="volume() * 100"></div>
+    </div>
+  }
+
+  @if (mensagemErro(); as erro) {
+    <p class="erro" role="alert">{{ erro }}</p>
+  }
+
+  <footer class="rodape">
+    <p>
+      Toque uma corda solta de cada vez. O ponteiro no verde e a corda está afinada — a faixa vale
+      ±5&nbsp;cents.
+    </p>
+  </footer>
+</div>

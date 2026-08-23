@@ -1,0 +1,68 @@
+name: Publicar no GitHub Pages
+
+on:
+  push:
+    # A publicação segue o branch padrão do repositório.
+    branches:
+      - main
+      - 'claude/**'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# Uma publicação por vez; corridas antigas cedem lugar à mais recente.
+concurrency:
+  group: github-pages
+  cancel-in-progress: true
+
+jobs:
+  construir:
+    name: Construir
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+
+      - name: Instalar dependências
+        run: npm ci
+
+      - name: Rodar os testes
+        run: npm test -- --watch=false
+
+      - name: Configurar o Pages
+        id: pages
+        uses: actions/configure-pages@v5
+        with:
+          enablement: true
+
+      - name: Construir o app
+        # O site fica em <usuario>.github.io/<repo>/, então o base href precisa
+        # do nome do repositório — senão os assets são buscados na raiz.
+        run: |
+          base="${{ steps.pages.outputs.base_path }}"
+          base="/${base#/}"
+          base="${base%/}/"
+          echo "base href: $base"
+          npm run build -- --base-href "$base"
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: dist/afinador/browser
+
+  publicar:
+    name: Publicar
+    needs: construir
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.publicacao.outputs.page_url }}
+    steps:
+      - id: publicacao
+        uses: actions/deploy-pages@v4

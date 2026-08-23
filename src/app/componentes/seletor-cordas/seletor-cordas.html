@@ -1,0 +1,34 @@
+<div class="cordas" [style.--colunas]="cordas().length">
+  @for (corda of cordas(); track corda.id) {
+    <button
+      type="button"
+      class="corda"
+      [class.corda--alvo]="corda.alvo"
+      [class.corda--concluida]="corda.concluida"
+      [attr.aria-pressed]="!automatico() && corda.alvo"
+      [attr.aria-label]="
+        corda.numero + 'ª corda, ' + corda.nome + ' ' + corda.oitava + '. Afinar esta corda.'
+      "
+      (click)="escolher.emit(corda.id)"
+    >
+      <span class="corda__cifra">
+        {{ corda.cifra }}<span class="corda__oitava">{{ corda.oitava }}</span>
+      </span>
+      <span class="corda__nome">{{ corda.nome }}</span>
+      @if (corda.concluida) {
+        <span class="corda__selo" aria-hidden="true">✓</span>
+      }
+    </button>
+  }
+</div>
+
+<button
+  type="button"
+  class="auto"
+  [class.auto--ligado]="automatico()"
+  [attr.aria-pressed]="automatico()"
+  (click)="voltarParaAutomatico.emit()"
+>
+  <span class="auto__ponto" aria-hidden="true"></span>
+  Detectar corda automaticamente
+</button>

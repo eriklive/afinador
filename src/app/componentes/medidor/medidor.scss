@@ -1,0 +1,100 @@
+:host {
+  display: block;
+}
+
+.medidor {
+  display: block;
+  width: 100%;
+  height: auto;
+  overflow: visible;
+}
+
+.medidor__trilho {
+  fill: none;
+  stroke: var(--traco);
+  stroke-width: 3;
+  stroke-linecap: round;
+}
+
+.medidor__zona {
+  fill: none;
+  stroke: var(--acento);
+  stroke-width: 7;
+  stroke-linecap: round;
+  opacity: 0.35;
+  transition: opacity 160ms ease;
+}
+
+.medidor__marca {
+  stroke: var(--texto-fraco);
+  stroke-width: 2;
+  stroke-linecap: round;
+  opacity: 0.5;
+}
+
+.medidor__marca--forte {
+  stroke: var(--texto);
+  stroke-width: 2.5;
+  opacity: 0.8;
+}
+
+.medidor__legenda {
+  fill: var(--texto-fraco);
+  font-size: 13px;
+  font-variant-numeric: tabular-nums;
+}
+
+.medidor__legenda--fim {
+  text-anchor: end;
+}
+
+.medidor__ponteiro line {
+  stroke: var(--alerta);
+  stroke-width: 5;
+  stroke-linecap: round;
+  transition: stroke 200ms ease;
+}
+
+.medidor__ponteiro {
+  /* Curto o bastante para acompanhar a corda, longo o bastante para não tremer. */
+  transition: transform 110ms cubic-bezier(0.33, 1, 0.68, 1);
+}
+
+.medidor__eixo {
+  fill: var(--alerta);
+  transition: fill 200ms ease;
+}
+
+.medidor--afinado {
+  .medidor__zona {
+    opacity: 1;
+  }
+
+  .medidor__ponteiro line,
+  .medidor__eixo {
+    stroke: var(--acento);
+    fill: var(--acento);
+  }
+
+  .medidor__ponteiro line {
+    filter: drop-shadow(0 0 10px color-mix(in srgb, var(--acento) 65%, transparent));
+  }
+}
+
+.medidor--inativo {
+  .medidor__ponteiro line,
+  .medidor__eixo {
+    stroke: var(--texto-fraco);
+    fill: var(--texto-fraco);
+  }
+
+  .medidor__zona {
+    opacity: 0.18;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .medidor__ponteiro {
+    transition: none;
+  }
+}

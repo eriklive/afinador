@@ -1,0 +1,115 @@
+:host {
+  display: block;
+}
+
+.cordas {
+  display: grid;
+  grid-template-columns: repeat(var(--colunas, 6), 1fr);
+  gap: 0.5rem;
+}
+
+.corda {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.1rem;
+  padding: 0.6rem 0.15rem 0.5rem;
+  border: 1px solid var(--traco);
+  border-radius: 0.9rem;
+  background: var(--superficie-alta);
+  color: var(--texto-fraco);
+  font: inherit;
+  cursor: pointer;
+  transition:
+    border-color 160ms ease,
+    background-color 160ms ease,
+    color 160ms ease,
+    transform 120ms ease;
+}
+
+.corda:active {
+  transform: scale(0.95);
+}
+
+.corda__cifra {
+  font-size: 1.15rem;
+  font-weight: 650;
+  line-height: 1;
+  letter-spacing: -0.01em;
+}
+
+.corda__oitava {
+  font-size: 0.6em;
+  vertical-align: super;
+  opacity: 0.65;
+}
+
+.corda__nome {
+  font-size: 0.66rem;
+  letter-spacing: 0.02em;
+  opacity: 0.75;
+}
+
+.corda--alvo {
+  border-color: var(--acento);
+  background: color-mix(in srgb, var(--acento) 16%, var(--superficie-alta));
+  color: var(--texto);
+}
+
+.corda--concluida .corda__cifra {
+  color: var(--acento);
+}
+
+.corda__selo {
+  position: absolute;
+  top: -0.35rem;
+  right: -0.2rem;
+  display: grid;
+  place-items: center;
+  width: 1.05rem;
+  height: 1.05rem;
+  border-radius: 50%;
+  background: var(--acento);
+  color: var(--fundo);
+  font-size: 0.65rem;
+  font-weight: 700;
+}
+
+.auto {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  width: 100%;
+  margin-top: 0.7rem;
+  padding: 0.55rem 0.75rem;
+  border: 1px solid var(--traco);
+  border-radius: 999px;
+  background: transparent;
+  color: var(--texto-fraco);
+  font: inherit;
+  font-size: 0.82rem;
+  cursor: pointer;
+  transition:
+    border-color 160ms ease,
+    color 160ms ease;
+}
+
+.auto__ponto {
+  width: 0.5rem;
+  height: 0.5rem;
+  border-radius: 50%;
+  background: var(--texto-fraco);
+  transition: background-color 160ms ease;
+}
+
+.auto--ligado {
+  border-color: color-mix(in srgb, var(--acento) 55%, transparent);
+  color: var(--texto);
+}
+
+.auto--ligado .auto__ponto {
+  background: var(--acento);
+  box-shadow: 0 0 8px color-mix(in srgb, var(--acento) 70%, transparent);
+}

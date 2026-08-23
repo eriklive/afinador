@@ -1,0 +1,30 @@
+<svg
+  class="medidor"
+  [class.medidor--afinado]="afinado()"
+  [class.medidor--inativo]="cents() === null"
+  viewBox="0 0 320 170"
+  role="img"
+  [attr.aria-label]="rotuloAcessivel()"
+>
+  <path class="medidor__trilho" [attr.d]="arco" />
+  <path class="medidor__zona" [attr.d]="zonaAfinada" />
+
+  @for (marca of marcas; track $index) {
+    <line
+      class="medidor__marca"
+      [class.medidor__marca--forte]="marca.forte"
+      [attr.x1]="marca.x1"
+      [attr.y1]="marca.y1"
+      [attr.x2]="marca.x2"
+      [attr.y2]="marca.y2"
+    />
+  }
+
+  <text class="medidor__legenda" x="26" y="150">−50</text>
+  <text class="medidor__legenda medidor__legenda--fim" x="294" y="150">+50</text>
+
+  <g class="medidor__ponteiro" [attr.transform]="transformacaoPonteiro()">
+    <line x1="160" y1="158" x2="160" y2="42" />
+  </g>
+  <circle class="medidor__eixo" cx="160" cy="158" r="7" />
+</svg>
