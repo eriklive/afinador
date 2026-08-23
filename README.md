@@ -58,8 +58,13 @@ O microfone só é liberado pelo navegador em **contexto seguro**: `localhost` o
 ## Publicação
 
 O workflow `.github/workflows/publicar.yml` roda os testes, constrói o app com o `--base-href` do
-Pages e publica a cada push no branch padrão. Não há passo manual: o próprio workflow habilita o
-Pages (`actions/configure-pages` com `enablement: true`) na primeira execução.
+Pages e publica a cada push no branch padrão.
+
+Antes da primeira execução o Pages precisa estar ligado no repositório: **Settings → Pages → Build
+and deployment → Source: GitHub Actions**. O workflow tenta ligar sozinho
+(`actions/configure-pages` com `enablement: true`), mas o `GITHUB_TOKEN` só consegue criar o site
+se as permissões de workflow do repositório permitirem — quando não permitem, o passo falha com
+`Resource not accessible by integration` e o interruptor tem de ser ligado à mão, uma única vez.
 
 Para conferir a build de produção antes de publicar:
 
