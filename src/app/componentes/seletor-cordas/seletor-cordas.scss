@@ -2,116 +2,134 @@
   display: block;
 }
 
+/* Flex, e não grid de colunas iguais: a corda mirada precisa poder crescer
+   por cima das outras — é assim que dá para achá-la sem ler as letras. */
 .cordas {
-  display: grid;
-  grid-template-columns: repeat(var(--colunas, 6), 1fr);
-  gap: clamp(0.4rem, 1.2vmin, 0.65rem);
+  display: flex;
+  gap: clamp(0.25rem, 1vmin, 0.4rem);
 }
 
 .corda {
-  position: relative;
+  flex: 1;
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 0.1rem;
-  padding: clamp(0.55rem, 1.4vmin, 0.9rem) 0.15rem clamp(0.45rem, 1.2vmin, 0.8rem);
-  border: 1px solid var(--traco);
-  border-radius: 0.9rem;
-  background: var(--superficie-alta);
+  padding: clamp(0.6rem, 1.5vmin, 0.85rem) 0.15rem clamp(0.5rem, 1.3vmin, 0.7rem);
+  border-radius: 0.75rem;
+  background: var(--recipiente);
   color: var(--texto-fraco);
   font: inherit;
-  cursor: pointer;
   transition:
-    border-color 160ms ease,
-    background-color 160ms ease,
-    color 160ms ease,
-    transform 120ms ease;
+    flex-grow 550ms var(--mola),
+    background-color 300ms var(--enfase),
+    color 200ms ease,
+    border-radius 500ms var(--mola),
+    transform 400ms var(--mola);
 }
 
 .corda:active {
-  transform: scale(0.95);
+  transform: scale(0.93);
 }
 
 .corda__cifra {
-  font-size: clamp(1.15rem, 2.5vmin, 1.55rem);
-  font-weight: 650;
+  font-size: clamp(1rem, 2.4vmin, 1.25rem);
+  font-variation-settings: 'wght' 700;
   line-height: 1;
   letter-spacing: -0.01em;
 }
 
 .corda__oitava {
-  font-size: 0.6em;
+  font-size: 0.55em;
   vertical-align: super;
-  opacity: 0.65;
+  opacity: 0.7;
 }
 
 .corda__nome {
-  font-size: clamp(0.66rem, 1.4vmin, 0.82rem);
-  letter-spacing: 0.02em;
-  opacity: 0.75;
+  font-size: clamp(0.62rem, 1.3vmin, 0.72rem);
+  opacity: 0.85;
 }
 
+/* A corda mirada assume a cor da afinação e o raio assimétrico: mesmo de
+   relance, é a única forma diferente da fileira. */
 .corda--alvo {
-  border-color: var(--acento);
-  background: color-mix(in srgb, var(--acento) 16%, var(--superficie-alta));
-  color: var(--texto);
+  flex-grow: 1.9;
+  border-radius: 1.4rem 0.5rem 1.4rem 0.5rem;
+  background: var(--acento);
+  color: var(--acento-tinta);
 }
 
-.corda--concluida .corda__cifra {
+.corda--alvo .corda__cifra {
+  font-variation-settings:
+    'wght' 860,
+    'wdth' 112;
+}
+
+.corda--concluida:not(.corda--alvo) .corda__cifra {
   color: var(--acento);
 }
 
 .corda__selo {
-  position: absolute;
-  top: -0.35rem;
-  right: -0.2rem;
   display: grid;
   place-items: center;
-  width: 1.05rem;
-  height: 1.05rem;
+  width: 1rem;
+  height: 1rem;
+  margin-top: 0.15rem;
   border-radius: 50%;
   background: var(--acento);
-  color: var(--fundo);
-  font-size: 0.65rem;
-  font-weight: 700;
+  color: var(--acento-tinta);
+  font-size: 0.6rem;
+  font-variation-settings: 'wght' 700;
+}
+
+/* Sobre a própria cor de acento o selo se apagaria: aqui ele inverte. */
+.corda--alvo .corda__selo {
+  background: color-mix(in srgb, var(--acento-tinta) 75%, transparent);
+  color: var(--acento);
 }
 
 .auto {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 0.5rem;
+  gap: 0.6rem;
   width: 100%;
-  margin-top: clamp(0.6rem, 1.5vmin, 0.9rem);
-  padding: clamp(0.55rem, 1.4vmin, 0.8rem) 0.75rem;
+  margin-top: clamp(0.4rem, 1.2vmin, 0.65rem);
+  padding: clamp(0.7rem, 1.7vmin, 0.9rem) 0.75rem;
   border: 1px solid var(--traco);
-  border-radius: 999px;
+  border-radius: 1.25rem;
   background: transparent;
   color: var(--texto-fraco);
   font: inherit;
-  font-size: clamp(0.82rem, 1.8vmin, 0.95rem);
-  cursor: pointer;
+  font-size: clamp(0.82rem, 1.7vmin, 0.9rem);
+  font-variation-settings: 'wght' 640;
   transition:
-    border-color 160ms ease,
-    color 160ms ease;
+    background-color 300ms var(--enfase),
+    color 200ms ease,
+    border-color 200ms ease,
+    border-radius 450ms var(--mola);
 }
 
 .auto__ponto {
-  width: 0.5rem;
-  height: 0.5rem;
+  width: 0.55rem;
+  height: 0.55rem;
   border-radius: 50%;
-  background: var(--texto-fraco);
-  transition: background-color 160ms ease;
+  background: var(--traco);
+  transition:
+    background-color 300ms ease,
+    transform 450ms var(--mola);
 }
 
 .auto--ligado {
-  border-color: color-mix(in srgb, var(--acento) 55%, transparent);
+  border-color: transparent;
+  background: var(--recipiente-alto);
+  border-radius: 1.7rem;
   color: var(--texto);
 }
 
 .auto--ligado .auto__ponto {
   background: var(--acento);
-  box-shadow: 0 0 8px color-mix(in srgb, var(--acento) 70%, transparent);
+  transform: scale(1.55);
 }
 
 /* Celular deitado: cada milímetro vertical conta. */
@@ -121,7 +139,7 @@
   }
 
   .auto {
-    margin-top: 0.45rem;
-    padding: 0.4rem 0.75rem;
+    margin-top: 0.35rem;
+    padding: 0.45rem 0.75rem;
   }
 }

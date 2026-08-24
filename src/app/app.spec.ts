@@ -2,6 +2,19 @@ import { TestBed } from '@angular/core/testing';
 import { App } from './app';
 import { Microfone } from './nucleo/microfone';
 
+/** Coloca o afinador ouvindo uma frequência, como se o microfone a tivesse pego. */
+function ouvir(microfone: Microfone, frequencia: number): void {
+  microfone.estado.set('ouvindo');
+  microfone.nivel.set(0.05);
+  microfone.leitura.set({ frequencia, clareza: 0.95, volume: 0.05 });
+}
+
+/** Matiz da cor de acento em vigor no componente raiz. */
+function matizDoAcento(elemento: HTMLElement): number {
+  const acento = elemento.style.getPropertyValue('--acento');
+  return Number(acento.slice(4, acento.indexOf(' ')));
+}
+
 async function montar() {
   const fixture = TestBed.createComponent(App);
   await fixture.whenStable();
@@ -109,6 +122,44 @@ describe('App', () => {
       );
       expect(barra).not.toBeNull();
       expect(parseFloat(barra!.style.width)).toBeGreaterThan(0);
+    });
+  });
+
+  // A cor é a linguagem inteira do afinador: se ela não acompanhar o desvio,
+  // não sobra nada dizendo o quanto falta girar a tarraxa.
+  describe('cor do desvio', () => {
+    it('fica verde quando a corda entra na faixa afinada', async () => {
+      const microfone = TestBed.inject(Microfone);
+      const fixture = await montar();
+      ouvir(microfone, 110); // A2 exato
+      await fixture.whenStable();
+
+      const raiz = fixture.nativeElement as HTMLElement;
+      expect(raiz.querySelector('.leitura__instrucao')?.textContent).toContain('Afinada');
+      expect(matizDoAcento(raiz)).toBeCloseTo(142, 0);
+    });
+
+    it('esquenta conforme a corda se afasta', async () => {
+      const microfone = TestBed.inject(Microfone);
+      const fixture = await montar();
+      const raiz = fixture.nativeElement as HTMLElement;
+
+      ouvir(microfone, 110 * Math.pow(2, 18 / 1200)); // +18 cents
+      await fixture.whenStable();
+      const perto = matizDoAcento(raiz);
+
+      ouvir(microfone, 110 * Math.pow(2, 42 / 1200)); // +42 cents
+      await fixture.whenStable();
+      const longe = matizDoAcento(raiz);
+
+      expect(perto).toBeLessThan(142);
+      expect(longe).toBeLessThan(perto);
+    });
+
+    it('sem nota nenhuma, sai da rampa em vez de fingir afinação', async () => {
+      const fixture = await montar();
+      const raiz = fixture.nativeElement as HTMLElement;
+      expect(raiz.style.getPropertyValue('--acento')).toBe('#c9bad3');
     });
   });
 

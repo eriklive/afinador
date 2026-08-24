@@ -42,30 +42,30 @@
     </section>
   }
 
-  <section class="painel" [class.painel--afinado]="afinado()">
-    <app-medidor class="painel__medidor" [cents]="desvio()" [afinado]="afinado()" />
+  <section class="palco" [class.palco--afinado]="afinado()">
+    <app-medidor [cents]="desvio()" [afinado]="afinado()">
+      <div nota class="leitura">
+        @if (notaAlvo(); as nota) {
+          <p class="leitura__cifra">
+            {{ nota.cifra }}<span class="leitura__oitava">{{ nota.oitava }}</span>
+          </p>
+          <p class="leitura__nome">{{ nota.nome }}</p>
+        } @else {
+          <p class="leitura__cifra leitura__cifra--vazia">–</p>
+          <p class="leitura__nome">Nenhuma corda</p>
+        }
+      </div>
 
-    <div class="leitura">
-      @if (notaAlvo(); as nota) {
-        <p class="leitura__cifra">
-          {{ nota.cifra }}<span class="leitura__oitava">{{ nota.oitava }}</span>
-        </p>
-        <p class="leitura__nome">{{ nota.nome }}</p>
-      } @else {
-        <p class="leitura__cifra leitura__cifra--vazia">–</p>
-        <p class="leitura__nome">Nenhuma corda</p>
-      }
-
-      <p class="leitura__numeros">
+      <p leitura class="leitura__numeros">
         <span>{{ textoFrequencia() }}</span>
         <span class="leitura__separador" aria-hidden="true">·</span>
         <span class="leitura__desvio">{{ textoDesvio() }}</span>
       </p>
+    </app-medidor>
 
-      <p class="leitura__instrucao" [class.leitura__instrucao--afinado]="afinado()" role="status">
-        {{ instrucao() }}
-      </p>
-    </div>
+    <p class="leitura__instrucao" [class.leitura__instrucao--afinado]="afinado()" role="status">
+      {{ instrucao() }}
+    </p>
   </section>
 
   <div class="lateral">
@@ -95,6 +95,7 @@
         </select>
       </label>
     </div>
+
     <div class="controles">
       <app-seletor-cordas
         [cordas]="cordasExibidas()"
@@ -145,8 +146,8 @@
 
   <footer class="rodape">
     <p>
-      Toque uma corda solta de cada vez. O ponteiro no verde e a corda está afinada — a faixa vale
-      ±5&nbsp;cents.
+      Toque uma corda solta de cada vez. A flor abre e a cor volta ao verde quando a corda entra na
+      faixa afinada — ela vale ±5&nbsp;cents.
     </p>
   </footer>
 </div>
