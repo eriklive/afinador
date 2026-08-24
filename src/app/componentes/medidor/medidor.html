@@ -1,30 +1,23 @@
-<svg
-  class="medidor"
-  [class.medidor--afinado]="afinado()"
-  [class.medidor--inativo]="cents() === null"
-  viewBox="0 0 320 170"
-  role="img"
-  [attr.aria-label]="rotuloAcessivel()"
->
-  <path class="medidor__trilho" [attr.d]="arco" />
-  <path class="medidor__zona" [attr.d]="zonaAfinada" />
+<div class="medidor__flor">
+  <svg viewBox="-150 -150 300 300" role="img" [attr.aria-label]="rotuloAcessivel()">
+    <path #miolo class="medidor__miolo" [attr.d]="florParada"></path>
+    <path #anel class="medidor__anel" [attr.d]="anelParado"></path>
+  </svg>
+  <div class="medidor__centro">
+    <ng-content select="[nota]" />
+  </div>
+</div>
 
-  @for (marca of marcas; track $index) {
-    <line
-      class="medidor__marca"
-      [class.medidor__marca--forte]="marca.forte"
-      [attr.x1]="marca.x1"
-      [attr.y1]="marca.y1"
-      [attr.x2]="marca.x2"
-      [attr.y2]="marca.y2"
-    />
-  }
+<div class="medidor__leitura">
+  <ng-content select="[leitura]" />
+</div>
 
-  <text class="medidor__legenda" x="26" y="150">−50</text>
-  <text class="medidor__legenda medidor__legenda--fim" x="294" y="150">+50</text>
+<div class="medidor__fita">
+  <svg viewBox="0 0 320 44" preserveAspectRatio="none" aria-hidden="true">
+    <path class="medidor__trilho" d="M6 22 H314"></path>
+    <path #onda class="medidor__onda" [attr.d]="ondaParada"></path>
+    <rect #marcador class="medidor__marcador" x="157" y="4" width="6" height="36" rx="3"></rect>
+  </svg>
+</div>
 
-  <g class="medidor__ponteiro" [attr.transform]="transformacaoPonteiro()">
-    <line x1="160" y1="158" x2="160" y2="42" />
-  </g>
-  <circle class="medidor__eixo" cx="160" cy="158" r="7" />
-</svg>
+<div class="medidor__escala" aria-hidden="true"><span>−50</span><span>0</span><span>+50</span></div>

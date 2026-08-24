@@ -12,7 +12,7 @@
     'cabecalho'
     'ajustes'
     'escolhas'
-    'painel'
+    'palco'
     'controles'
     'rodape';
   /* `safe` protege telas baixas: se o conteúdo não couber, ele volta a
@@ -21,10 +21,11 @@
   gap: var(--espaco);
   width: 100%;
   min-height: 100dvh;
-  max-width: 30rem;
+  max-width: 27rem;
   margin: 0 auto;
   padding: var(--margem);
   padding-bottom: calc(var(--margem) + env(safe-area-inset-bottom));
+  background: var(--superficie);
 }
 
 /* Item de grid nasce com `min-width: auto`, ou seja, o tamanho min-content do
@@ -37,6 +38,8 @@
   min-width: 0;
 }
 
+/* ---------------------------------------------------------------- cabeçalho */
+
 .cabecalho {
   grid-area: cabecalho;
   display: flex;
@@ -47,37 +50,53 @@
 
 .cabecalho__titulo {
   margin: 0;
-  font-size: clamp(1.15rem, 2.6vmin, 1.6rem);
-  font-weight: 600;
-  letter-spacing: 0.01em;
+  font-size: clamp(1.4rem, 3vmin, 1.8rem);
+  font-variation-settings:
+    'wght' 640,
+    'wdth' 106;
+  font-weight: 640;
+  letter-spacing: -0.02em;
 }
 
+/* Botões que mudam de forma ao toque: o raio é o retorno, não uma sombra. */
 .diapasao {
-  padding: 0.35rem 0.7rem;
+  padding: 0.55rem 0.9rem;
   border: 1px solid var(--traco);
-  border-radius: 999px;
+  border-radius: 0.7rem;
   background: transparent;
   color: var(--texto-fraco);
-  font-size: clamp(0.78rem, 1.7vmin, 0.92rem);
+  font-size: clamp(0.78rem, 1.7vmin, 0.9rem);
+  font-variation-settings: 'wght' 600;
   font-variant-numeric: tabular-nums;
-  cursor: pointer;
+  transition:
+    border-radius 350ms var(--mola),
+    background-color 200ms ease,
+    color 200ms ease;
+}
+
+.diapasao:active {
+  border-radius: 1.4rem;
+  background: var(--recipiente-alto);
 }
 
 .diapasao--aberto {
-  border-color: color-mix(in srgb, var(--acento) 55%, transparent);
-  color: var(--texto);
+  border-color: transparent;
+  background: var(--primaria-recipiente);
+  color: var(--sobre-primaria-recipiente);
+  border-radius: 1.4rem;
 }
+
+/* ------------------------------------------------------------------ ajustes */
 
 .ajustes {
   grid-area: ajustes;
-  padding: 0.8rem;
-  border: 1px solid var(--traco);
-  border-radius: 1rem;
-  background: var(--superficie);
+  padding: 0.9rem 1rem;
+  border-radius: 1.25rem;
+  background: var(--recipiente);
 }
 
 .ajustes__texto {
-  margin: 0 0 0.65rem;
+  margin: 0 0 0.7rem;
   color: var(--texto-fraco);
   font-size: 0.78rem;
 }
@@ -90,15 +109,23 @@
 }
 
 .passo {
-  width: 2.25rem;
-  height: 2.25rem;
-  border: 1px solid var(--traco);
+  width: 2.5rem;
+  height: 2.5rem;
   border-radius: 50%;
-  background: var(--superficie-alta);
+  background: var(--recipiente-alto);
   color: var(--texto);
-  font-size: 1.15rem;
+  font-size: 1.2rem;
   line-height: 1;
-  cursor: pointer;
+  transition:
+    border-radius 400ms var(--mola),
+    transform 300ms var(--mola),
+    background-color 200ms ease;
+}
+
+.passo:active:not(:disabled) {
+  border-radius: 0.85rem;
+  background: var(--primaria-recipiente);
+  color: var(--sobre-primaria-recipiente);
 }
 
 .passo:disabled {
@@ -107,22 +134,25 @@
 }
 
 .ajustes__valor {
-  min-width: 4.5rem;
+  min-width: 4.75rem;
   text-align: center;
-  font-variant-numeric: tabular-nums;
+  font-family: var(--tipo-numero);
+  font-size: 0.95rem;
   font-weight: 600;
 }
 
 .ajustes__voltar {
   margin-left: auto;
-  padding: 0.4rem 0.75rem;
+  padding: 0.45rem 0.85rem;
   border: 1px solid var(--traco);
   border-radius: 999px;
   background: transparent;
   color: var(--texto-fraco);
   font-size: 0.78rem;
-  cursor: pointer;
+  font-variation-settings: 'wght' 600;
 }
+
+/* ----------------------------------------------------------------- escolhas */
 
 /* No estreito o agrupador some do layout e escolhas/controles voltam a ser
    itens diretos do grid, cada um na sua área — é o que mantém a ordem do
@@ -139,98 +169,143 @@
 }
 
 .segmentado {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
+  display: flex;
   gap: 0.25rem;
   padding: 0.25rem;
-  border: 1px solid var(--traco);
-  border-radius: 999px;
-  background: var(--superficie);
+  border-radius: 1.65rem;
+  background: var(--recipiente);
 }
 
+/* O instrumento escolhido não muda só de cor: ele cresce, encolhe o raio e
+   abre espaço para o ✓. A largura é o que a mão vê primeiro. */
 .segmentado__opcao {
-  padding: clamp(0.6rem, 1.5vmin, 0.85rem) 0.5rem;
-  border: none;
-  border-radius: 999px;
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.35rem;
+  padding: clamp(0.7rem, 1.7vmin, 0.9rem) 0.5rem;
+  border-radius: 1.4rem;
   background: transparent;
   color: var(--texto-fraco);
-  font-size: clamp(0.92rem, 2vmin, 1.1rem);
-  font-weight: 550;
-  cursor: pointer;
+  font-size: clamp(0.92rem, 2vmin, 1.05rem);
+  font-variation-settings: 'wght' 600;
   transition:
-    background-color 180ms ease,
-    color 180ms ease;
+    background-color 300ms var(--enfase),
+    color 200ms ease,
+    flex-grow 500ms var(--mola),
+    border-radius 450ms var(--mola);
+}
+
+/* O ✓ é pseudo-elemento de propósito: ele cresce da largura zero sem entrar
+   no nome acessível do botão, que continua sendo só "Violão" ou "Ukulele". */
+.segmentado__opcao::before {
+  content: '✓';
+  display: inline-block;
+  width: 0;
+  overflow: hidden;
+  font-size: 0.85em;
+  transition: width 350ms var(--mola);
 }
 
 .segmentado__opcao--ativa {
-  background: var(--superficie-alta);
-  color: var(--texto);
-  box-shadow: inset 0 0 0 1px var(--traco);
+  flex-grow: 1.45;
+  border-radius: 0.9rem;
+  background: var(--primaria-recipiente);
+  color: var(--sobre-primaria-recipiente);
+  font-variation-settings:
+    'wght' 780,
+    'wdth' 108;
+}
+
+.segmentado__opcao--ativa::before {
+  width: 0.95em;
 }
 
 .campo {
   display: flex;
   align-items: center;
   gap: 0.75rem;
-  padding: 0.5rem 0.5rem 0.5rem 0.9rem;
-  border: 1px solid var(--traco);
-  border-radius: 0.9rem;
-  background: var(--superficie);
+  padding: 0.4rem 0.5rem 0.4rem 1.1rem;
+  border-radius: 1.15rem;
+  background: var(--recipiente);
 }
 
 .campo__rotulo {
   color: var(--texto-fraco);
-  font-size: clamp(0.8rem, 1.7vmin, 0.92rem);
+  font-size: clamp(0.8rem, 1.7vmin, 0.85rem);
+  font-variation-settings: 'wght' 600;
   white-space: nowrap;
 }
 
 .campo__select {
   flex: 1;
   min-width: 0;
-  padding: 0.45rem 0.5rem;
-  border: none;
-  border-radius: 0.6rem;
-  background: var(--superficie-alta);
+  padding: 0.8rem 2.1rem 0.8rem 0.9rem;
+  border-radius: 0.9rem;
+  appearance: none;
+  background-color: var(--recipiente-alto);
+  /* Duas metades de um triângulo desenhadas em gradiente: uma seta que segue
+     a cor do texto sem virar um arquivo à parte. */
+  background-image:
+    linear-gradient(45deg, transparent 50%, var(--texto-fraco) 50%),
+    linear-gradient(135deg, var(--texto-fraco) 50%, transparent 50%);
+  background-position:
+    calc(100% - 1.1rem) center,
+    calc(100% - 0.8rem) center;
+  background-size: 0.32rem 0.32rem;
+  background-repeat: no-repeat;
   color: var(--texto);
-  font-size: clamp(0.88rem, 1.9vmin, 1rem);
+  font-size: clamp(0.88rem, 1.9vmin, 0.95rem);
+  font-variation-settings: 'wght' 600;
 }
 
-.painel {
-  grid-area: painel;
+/* -------------------------------------------------------------------- palco */
+
+.palco {
+  grid-area: palco;
+  position: relative;
+  overflow: hidden;
   display: flex;
   flex-direction: column;
+  align-items: center;
   justify-content: center;
-  padding: clamp(1rem, 2.4vmin, 1.75rem) clamp(1rem, 2vmin, 1.5rem);
-  border: 1px solid var(--traco);
-  border-radius: 1.5rem;
-  background: var(--superficie);
-  transition: border-color 220ms ease;
+  padding: clamp(1rem, 2.4vmin, 1.4rem) clamp(0.9rem, 2vmin, 1.1rem) clamp(1.1rem, 2.6vmin, 1.5rem);
+  border-radius: 1.9rem;
+  background: var(--recipiente);
 }
 
-.painel--afinado {
-  border-color: color-mix(in srgb, var(--acento) 50%, transparent);
+/* Brilho da cor do momento atrás da flor — a única luz da tela. */
+.palco::after {
+  content: '';
+  position: absolute;
+  inset: -40% -10% auto;
+  height: 70%;
+  pointer-events: none;
+  background: radial-gradient(
+    60% 60% at 50% 40%,
+    color-mix(in srgb, var(--acento) 20%, transparent),
+    transparent 70%
+  );
+  opacity: 0.6;
 }
 
-/* O medidor tem proporção 320:170. Amarrar a largura à altura disponível é o
-   que impede o ponteiro de virar uma faixa gigante em paisagem, onde sobra
-   largura e falta altura. */
-.painel__medidor {
-  width: min(100%, calc(36dvh * 1.88));
-  margin-inline: auto;
+.palco > * {
+  position: relative;
+  z-index: 1;
 }
 
 .leitura {
-  margin-top: 0.4rem;
   text-align: center;
 }
 
 .leitura__cifra {
   margin: 0;
-  font-size: clamp(3.2rem, 10vmin, 5.5rem);
-  font-weight: 300;
-  line-height: 1;
-  letter-spacing: -0.03em;
-  font-variant-numeric: tabular-nums;
+  color: var(--acento);
+  font-size: clamp(3rem, 13vmin, 5.6rem);
+  font-variation-settings: 'wght' 760;
+  line-height: 0.9;
+  letter-spacing: -0.02em;
 }
 
 .leitura__cifra--vazia {
@@ -238,46 +313,58 @@
 }
 
 .leitura__oitava {
-  font-size: 0.38em;
+  font-size: 0.34em;
   vertical-align: super;
-  color: var(--texto-fraco);
+  font-variation-settings: 'wght' 500;
 }
 
 .leitura__nome {
-  margin: 0.1rem 0 0;
+  margin: 0.35rem 0 0;
   color: var(--texto-fraco);
-  font-size: clamp(0.9rem, 1.9vmin, 1.05rem);
-  letter-spacing: 0.06em;
+  font-size: clamp(0.7rem, 1.7vmin, 0.82rem);
+  font-variation-settings: 'wght' 600;
+  letter-spacing: 0.22em;
   text-transform: uppercase;
 }
 
+/* O arranjo em linha vem do próprio medidor, que hospeda esta projeção. */
 .leitura__numeros {
-  display: flex;
-  align-items: baseline;
-  justify-content: center;
-  gap: 0.5rem;
-  margin: 0.7rem 0 0;
+  margin: 0;
   color: var(--texto-fraco);
-  font-size: clamp(0.88rem, 1.9vmin, 1.05rem);
-  font-variant-numeric: tabular-nums;
+  font-family: var(--tipo-numero);
+  font-size: clamp(0.8rem, 1.8vmin, 0.92rem);
 }
 
 .leitura__desvio {
-  color: var(--texto);
+  color: var(--acento);
   font-weight: 600;
 }
 
+/* A instrução é uma pílula da cor da afinação; ao entrar no tom ela arredonda
+   e dá um pulo curto — o retorno para quem está olhando o braço, não a tela. */
 .leitura__instrucao {
-  margin: 0.55rem 0 0;
-  font-size: clamp(1rem, 2.3vmin, 1.35rem);
-  font-weight: 550;
-  color: var(--alerta);
-  transition: color 200ms ease;
+  margin: 0.9rem 0 0;
+  padding: 0.7rem 1.4rem;
+  border-radius: 1rem;
+  background: var(--acento);
+  color: var(--acento-tinta);
+  font-size: clamp(0.95rem, 2.2vmin, 1.1rem);
+  font-variation-settings:
+    'wght' 760,
+    'wdth' 104;
+  text-align: center;
+  text-wrap: balance;
+  transition:
+    border-radius 550ms var(--mola),
+    transform 550ms var(--mola);
 }
 
 .leitura__instrucao--afinado {
-  color: var(--acento);
+  border-radius: 1.65rem;
+  transform: scale(1.07);
 }
+
+/* --------------------------------------------------------------- controles */
 
 .controles {
   grid-area: controles;
@@ -290,27 +377,28 @@
   /* auto-fit resolve sozinho o empilhar/lado-a-lado, sem breakpoint próprio:
      o que manda é a largura da coluna, não a do dispositivo. */
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(12rem, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(11rem, 1fr));
   gap: 0.5rem;
 }
 
 .botao {
-  padding: clamp(0.85rem, 1.9vmin, 1.1rem) 1rem;
+  padding: clamp(0.9rem, 2vmin, 1.1rem) 1rem;
   border: 1px solid transparent;
-  border-radius: 999px;
-  font-size: clamp(0.95rem, 1.8vmin, 1.05rem);
-  font-weight: 600;
+  border-radius: 1.25rem;
+  font-size: clamp(0.9rem, 1.8vmin, 0.98rem);
+  font-variation-settings: 'wght' 680;
   text-wrap: balance;
-  cursor: pointer;
   transition:
-    background-color 180ms ease,
-    color 180ms ease,
-    border-color 180ms ease,
-    transform 120ms ease;
+    border-radius 450ms var(--mola),
+    transform 350ms var(--mola),
+    background-color 250ms ease,
+    color 200ms ease,
+    border-color 200ms ease;
 }
 
 .botao:active:not(:disabled) {
-  transform: scale(0.98);
+  border-radius: 0.75rem;
+  transform: scale(0.96);
 }
 
 .botao:disabled {
@@ -319,31 +407,31 @@
 }
 
 .botao--principal {
-  background: var(--acento);
-  color: #06231a;
+  background: var(--primaria);
+  color: var(--sobre-primaria);
 }
 
 .botao--parar {
+  background: var(--recipiente-alto);
+  color: var(--texto);
+}
+
+.botao--secundario {
   background: transparent;
   border-color: var(--traco);
   color: var(--texto);
 }
 
-.botao--secundario {
-  background: var(--superficie-alta);
-  border-color: var(--traco);
-  color: var(--texto);
-}
-
 .botao--tocando {
-  border-color: color-mix(in srgb, var(--acento) 60%, transparent);
-  color: var(--acento);
+  border-color: transparent;
+  background: var(--primaria-recipiente);
+  color: var(--sobre-primaria-recipiente);
 }
 
 .nivel {
-  height: 0.25rem;
+  height: 0.3rem;
   border-radius: 999px;
-  background: var(--superficie-alta);
+  background: var(--recipiente-alto);
   overflow: hidden;
 }
 
@@ -356,10 +444,9 @@
 
 .erro {
   margin: 0;
-  padding: 0.7rem 0.9rem;
-  border: 1px solid color-mix(in srgb, var(--erro) 45%, transparent);
-  border-radius: 0.9rem;
-  background: color-mix(in srgb, var(--erro) 12%, transparent);
+  padding: 0.75rem 1rem;
+  border-radius: 1rem;
+  background: color-mix(in srgb, var(--erro) 16%, var(--recipiente));
   color: var(--erro);
   font-size: 0.85rem;
 }
@@ -369,8 +456,9 @@
   max-width: 44rem;
   margin-inline: auto;
   color: var(--texto-fraco);
-  font-size: clamp(0.76rem, 1.6vmin, 0.88rem);
+  font-size: clamp(0.72rem, 1.5vmin, 0.8rem);
   text-align: center;
+  text-wrap: pretty;
 }
 
 .rodape p {
@@ -381,7 +469,7 @@
    ali desperdiçam a altura de sobra e encolhem o medidor sem motivo. */
 @media (min-width: 40rem) {
   .tela {
-    max-width: 40rem;
+    max-width: 34rem;
   }
 }
 
@@ -394,14 +482,14 @@
     grid-template-areas:
       'cabecalho cabecalho'
       'ajustes   ajustes'
-      'painel    lateral'
+      'palco     lateral'
       'rodape    rodape';
-    max-width: 64rem;
+    max-width: 60rem;
     column-gap: clamp(1rem, 3vmin, 2rem);
   }
 
   /* Aqui o agrupador vira a coluna de verdade: uma pilha só, sem linha de
-     grid entre escolhas e controles para abrir vão quando o painel é o mais
+     grid entre escolhas e controles para abrir vão quando o palco é o mais
      alto dos dois. */
   .lateral {
     display: flex;
@@ -413,46 +501,39 @@
 }
 
 /* Celular deitado: sobra largura e falta altura, então o que encolhe é o
-   eixo vertical — medidor mais baixo e tipografia sem o piso do retrato. */
+   eixo vertical — flor mais baixa e tipografia sem o piso do retrato. */
 @media (orientation: landscape) and (max-height: 32rem) {
   .tela {
     --espaco: 0.5rem;
     --margem: 0.7rem;
   }
 
-  .painel {
-    padding: 0.75rem 0.9rem;
-  }
-
-  .painel__medidor {
-    width: min(100%, calc(32dvh * 1.88));
-  }
-
-  .leitura {
-    margin-top: 0.2rem;
+  .palco {
+    padding: 0.7rem 0.8rem 0.85rem;
   }
 
   .leitura__cifra {
-    font-size: 2.5rem;
+    font-size: 2.4rem;
   }
 
-  .leitura__numeros {
-    margin-top: 0.4rem;
+  .leitura__nome {
+    margin-top: 0.15rem;
   }
 
   .leitura__instrucao {
-    margin-top: 0.3rem;
-    font-size: 0.95rem;
+    margin-top: 0.5rem;
+    padding: 0.5rem 1.1rem;
+    font-size: 0.92rem;
   }
 
-  /* A dica de rodapé é redundante com o próprio medidor, e numa tela de 320
+  /* A dica de rodapé é redundante com o próprio mostrador, e numa tela de 320
      a 390 px de altura esses ~26 px são a diferença entre caber e rolar. */
   .rodape {
     display: none;
   }
 
   .cabecalho__titulo {
-    font-size: 1rem;
+    font-size: 1.1rem;
   }
 
   .segmentado__opcao {
@@ -460,7 +541,11 @@
   }
 
   .campo {
-    padding: 0.35rem 0.35rem 0.35rem 0.75rem;
+    padding: 0.3rem 0.35rem 0.3rem 0.8rem;
+  }
+
+  .campo__select {
+    padding: 0.5rem 1.9rem 0.5rem 0.75rem;
   }
 
   .botao {

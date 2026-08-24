@@ -1,100 +1,129 @@
 :host {
-  display: block;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
 }
 
-.medidor {
-  display: block;
+.medidor__flor {
+  position: relative;
+  width: min(100%, 17rem, 38dvh);
+  aspect-ratio: 1;
+}
+
+.medidor__flor svg {
+  position: absolute;
+  inset: 0;
   width: 100%;
-  height: auto;
+  height: 100%;
+  overflow: visible;
+}
+
+.medidor__miolo {
+  fill: var(--acento-fundo);
+}
+
+.medidor__anel {
+  fill: none;
+  stroke: var(--acento);
+  stroke-width: 2.5;
+  opacity: 0.5;
+}
+
+/* A nota mora dentro da flor: o miolo é o fundo dela, não uma caixa atrás. */
+.medidor__centro {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 1;
+}
+
+.medidor__leitura {
+  display: flex;
+  align-items: baseline;
+  justify-content: center;
+  gap: 0.45rem;
+  margin-top: 0.35rem;
+}
+
+.medidor__fita {
+  width: 100%;
+  max-width: 20rem;
+  height: 2.75rem;
+  margin-top: 0.35rem;
+}
+
+.medidor__fita svg {
+  width: 100%;
+  height: 100%;
   overflow: visible;
 }
 
 .medidor__trilho {
   fill: none;
   stroke: var(--traco);
-  stroke-width: 3;
-  stroke-linecap: round;
+  stroke-width: 2;
+  opacity: 0.45;
 }
 
-.medidor__zona {
+.medidor__onda {
   fill: none;
   stroke: var(--acento);
-  stroke-width: 7;
+  stroke-width: 4;
   stroke-linecap: round;
-  opacity: 0.35;
-  transition: opacity 160ms ease;
 }
 
-.medidor__marca {
-  stroke: var(--texto-fraco);
-  stroke-width: 2;
-  stroke-linecap: round;
-  opacity: 0.5;
+.medidor__marcador {
+  fill: var(--acento);
 }
 
-.medidor__marca--forte {
-  stroke: var(--texto);
-  stroke-width: 2.5;
-  opacity: 0.8;
+.medidor__escala {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  max-width: 20rem;
+  color: var(--texto-fraco);
+  font-family: var(--tipo-numero);
+  font-size: 0.72rem;
 }
 
-.medidor__legenda {
-  fill: var(--texto-fraco);
-  font-size: 13px;
-  font-variant-numeric: tabular-nums;
+/* Sem sinal a flor sai de cena: fica o contorno, sem a cor que quer dizer algo. */
+:host(.medidor--inativo) {
+  .medidor__anel {
+    stroke: var(--traco);
+    opacity: 0.7;
+  }
+
+  .medidor__miolo {
+    fill: var(--recipiente-alto);
+  }
+
+  .medidor__onda,
+  .medidor__marcador {
+    stroke: var(--traco);
+    fill: var(--traco);
+  }
 }
 
-.medidor__legenda--fim {
-  text-anchor: end;
-}
-
-.medidor__ponteiro line {
-  stroke: var(--alerta);
-  stroke-width: 5;
-  stroke-linecap: round;
-  transition: stroke 200ms ease;
-}
-
-.medidor__ponteiro {
-  /* Curto o bastante para acompanhar a corda, longo o bastante para não tremer. */
-  transition: transform 110ms cubic-bezier(0.33, 1, 0.68, 1);
-}
-
-.medidor__eixo {
-  fill: var(--alerta);
-  transition: fill 200ms ease;
-}
-
-.medidor--afinado {
-  .medidor__zona {
+:host(.medidor--afinado) {
+  .medidor__anel {
     opacity: 1;
   }
 
-  .medidor__ponteiro line,
-  .medidor__eixo {
-    stroke: var(--acento);
-    fill: var(--acento);
-  }
-
-  .medidor__ponteiro line {
-    filter: drop-shadow(0 0 10px color-mix(in srgb, var(--acento) 65%, transparent));
+  .medidor__marcador {
+    filter: drop-shadow(0 0 8px color-mix(in srgb, var(--acento) 70%, transparent));
   }
 }
 
-.medidor--inativo {
-  .medidor__ponteiro line,
-  .medidor__eixo {
-    stroke: var(--texto-fraco);
-    fill: var(--texto-fraco);
+@media (orientation: landscape) and (max-height: 32rem) {
+  .medidor__flor {
+    width: min(100%, 11rem, 46dvh);
   }
 
-  .medidor__zona {
-    opacity: 0.18;
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .medidor__ponteiro {
-    transition: none;
+  .medidor__fita {
+    height: 2rem;
   }
 }

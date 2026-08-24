@@ -1,0 +1,21 @@
+Roboto Flex e Roboto Mono são distribuídas sob a SIL Open Font License 1.1.
+
+  Copyright 2017 The Roboto Flex Project Authors
+  https://github.com/TypeNetwork/Roboto-Flex
+
+  Copyright 2015 The Roboto Mono Project Authors
+  https://github.com/googlefonts/robotomono
+
+  Texto da licença: https://openfontlicense.org
+
+Os dois arquivos deste diretório são recortes dos originais servidos pelo Google
+Fonts, feitos com `fonttools`:
+
+  roboto-flex.woff2  subconjunto latino, eixo `opsz` fixado em 14 e eixo `wdth`
+                     limitado a 100–115 — a faixa que a interface usa. Os eixos
+                     `wght` (100–1000) e `wdth` seguem variáveis. 190 kB → 42 kB.
+  roboto-mono.woff2  subconjunto latino, eixo `wght` limitado a 400–600.
+                     32 kB → 21 kB.
+
+Servir as fontes daqui, e não de um CDN, mantém a tipografia idêntica em rede
+restrita e evita uma requisição a terceiros a cada visita.

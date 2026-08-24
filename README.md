@@ -5,8 +5,8 @@ pensado primeiro para o celular e publicado como página estática no GitHub Pag
 
 ## O que ele faz
 
-- **Detecta a nota pelo microfone** e mostra o desvio em cents num ponteiro de ±50 cents.
-  A faixa verde no topo do arco vale ±5 cents — dentro dela a corda está afinada.
+- **Detecta a nota pelo microfone** e mostra o desvio numa flor que abre quando a corda
+  entra na faixa afinada — ±5 cents — e numa fita de ±50 cents com a marca do desvio.
 - **Escolhe a corda sozinho**: toque qualquer corda solta e o afinador mira a mais próxima.
   Dá para fixar uma corda tocando nela na régua de baixo.
 - **Instruções em vez de números**: "aperte a corda" / "afrouxe a corda", e uma vibração curta
@@ -26,7 +26,7 @@ pensado primeiro para o celular e publicado como página estática no GitHub Pag
 
 ## Como funciona a detecção
 
-O caminho do som até o ponteiro está em `src/app/nucleo/`:
+O caminho do som até o mostrador está em `src/app/nucleo/`:
 
 1. **`microfone.ts`** abre o microfone com `echoCancellation`, `noiseSuppression` e
    `autoGainControl` **desligados** — os processamentos de voz do navegador destroem a
@@ -52,12 +52,51 @@ O caminho do som até o ponteiro está em `src/app/nucleo/`:
 4. **`nota.ts`** converte para número MIDI e cents. Toda nota é guardada como MIDI inteiro e só
    vira Hz na comparação, o que faz a calibração do diapasão reafinar tudo de graça.
 
+## A linguagem visual
+
+O afinador não usa números como retorno principal — usa **cor e forma**, porque quem está
+afinando olha o braço do instrumento, não a tela.
+
+**A cor é contínua, não são três estados.** `nucleo/cor-do-desvio.ts` mapeia o desvio numa rampa
+de cinco paradas em HSL — verde, limão, amarelo, laranja, vermelho — e o componente raiz escreve o
+resultado em três variáveis CSS (`--acento`, `--acento-fundo`, `--acento-tinta`). Nada mais na
+interface decide cor: nota, flor, fita, pílula de instrução, corda mirada e barra de nível só leem
+essas três. Dentro da tolerância a rampa devolve verde puro — a faixa afinada não é um degradê que
+já começa a esquentar —, e sem nota nenhuma o acento sai da rampa e vira o lilás da interface, para
+que "esperando" nunca se pareça com "afinado".
+
+As três variáveis são registradas com `@property` em `styles.scss`. É isso que permite
+interpolá-las: sem o registro, o navegador trocaria a cor de degrau em degrau a cada leitura do
+microfone; com ele, a cor escorre.
+
+**A forma diz o mesmo que a cor, para quem não a distingue.** O mostrador é uma flor de sete
+pétalas (`nucleo/flor.ts`): uma circunferência cujo raio é modulado por um cosseno. Fora do tom a
+amplitude é quase zero e ela é um círculo que treme e gira; conforme a corda entra na faixa, as
+pétalas se abrem e o giro quase para. Quem só vê a forma tem a mesma informação de quem só vê a
+cor.
+
+O movimento roda em `requestAnimationFrame`, com molas amortecidas (`nucleo/mola.ts`) no lugar de
+transições CSS: o alvo muda a cada leitura do microfone, e uma transição reiniciada a cada valor
+novo fica picada — a mola carrega a velocidade de um quadro para o outro. O laço escreve direto nos
+nós do SVG, sem passar pela detecção de mudanças do Angular, que custaria um ciclo por quadro sem
+mudar um pixel. Com `prefers-reduced-motion` a mola some: a forma vira função só da leitura, e o
+quadro é descartado inteiro enquanto a leitura não muda.
+
+**Os controles mudam de forma, não só de cor.** O instrumento escolhido cresce e diminui o raio; a
+corda mirada assume um raio assimétrico; botões apertados encolhem o raio e a escala. As curvas
+estão em `--mola` e `--enfase`.
+
+**Tipografia.** Roboto Flex, variável em peso e largura — os dois eixos separam a corda mirada das
+outras sem trocar de família — e Roboto Mono nos números. As duas são servidas do próprio pacote,
+recortadas com `fonttools` para o subconjunto latino e para a faixa de eixos que a interface usa:
+63 kB somados, contra 384 kB dos arquivos originais. Detalhes e licença em `src/fontes/LICENCA.txt`.
+
 ## Rodando localmente
 
 ```bash
 npm install
 npm start          # http://localhost:4200
-npm test           # 58 testes de unidade e de componente
+npm test           # 89 testes de unidade e de componente
 npm run build      # saída em dist/afinador/browser
 ```
 

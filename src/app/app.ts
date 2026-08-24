@@ -14,6 +14,7 @@ import {
   type Corda,
   type InstrumentoId,
 } from './nucleo/afinacoes';
+import { COR_EM_ESPERA, corDoDesvio, intensidadeDoDesvio } from './nucleo/cor-do-desvio';
 import { Microfone } from './nucleo/microfone';
 import {
   A4_MAXIMO,
@@ -43,6 +44,11 @@ interface CordaAlvo extends Corda {
   templateUrl: './app.html',
   styleUrl: './app.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  host: {
+    '[style.--acento]': 'cores().acento',
+    '[style.--acento-fundo]': 'cores().fundo',
+    '[style.--acento-tinta]': 'cores().tinta',
+  },
 })
 export class App {
   private readonly microfone = inject(Microfone);
@@ -155,6 +161,17 @@ export class App {
     if (cents > ESCALA_MEDIDOR) return `> +${ESCALA_MEDIDOR} ¢`;
     if (cents < -ESCALA_MEDIDOR) return `< −${ESCALA_MEDIDOR} ¢`;
     return `${cents > 0 ? '+' : '−'}${Math.abs(cents)} ¢`;
+  });
+
+  /**
+   * Cor do afinador neste instante — verde na faixa afinada, esquentando até
+   * o vermelho conforme a corda se afasta. Sai daqui para três variáveis CSS
+   * e é só o que a interface inteira lê: nota, flor, fita, pílula e cordas.
+   */
+  protected readonly cores = computed(() => {
+    const desvio = this.desvio();
+    if (desvio === null) return COR_EM_ESPERA;
+    return corDoDesvio(intensidadeDoDesvio(desvio, TOLERANCIA_CENTS));
   });
 
   /** Altura da barra de nível, em porcentagem. */
