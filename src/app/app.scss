@@ -364,6 +364,29 @@
   transform: scale(1.07);
 }
 
+/* Quando a pílula é botão ela precisa parecer tocável: o ícone entra à
+   esquerda e o raio responde ao toque, como nos outros botões da tela. */
+.leitura__instrucao--acao {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+}
+
+.leitura__instrucao--acao:active:not(:disabled) {
+  border-radius: 1.65rem;
+  transform: scale(0.97);
+}
+
+.leitura__instrucao--acao:disabled {
+  opacity: 0.7;
+  cursor: default;
+}
+
+.leitura__microfone {
+  font-size: 0.95em;
+  line-height: 1;
+}
+
 /* --------------------------------------------------------------- controles */
 
 .controles {
@@ -404,11 +427,6 @@
 .botao:disabled {
   opacity: 0.45;
   cursor: default;
-}
-
-.botao--principal {
-  background: var(--primaria);
-  color: var(--sobre-primaria);
 }
 
 .botao--parar {

@@ -65,6 +65,46 @@ describe('App', () => {
     expect(elemento.querySelector('.leitura__instrucao')?.textContent).toContain('microfone');
   });
 
+  // A pílula do meio da tela é o caminho de entrada: com o microfone parado
+  // ela precisa abrir a escuta, não só descrever o que fazer.
+  it('a instrução vira o botão que abre o microfone', async () => {
+    const microfone = TestBed.inject(Microfone);
+    const abrir = vi.spyOn(microfone, 'iniciar').mockResolvedValue();
+    const fixture = await montar();
+    const elemento = fixture.nativeElement as HTMLElement;
+
+    const pilula = elemento.querySelector<HTMLButtonElement>('.leitura__instrucao');
+    expect(pilula?.tagName).toBe('BUTTON');
+    expect(pilula?.textContent).toContain('Ative o microfone');
+
+    pilula!.click();
+    expect(abrir).toHaveBeenCalled();
+
+    // Ouvindo, ela volta a ser só o recado — ninguém deve parar a escuta sem
+    // querer ao tocar no meio da tela.
+    microfone.estado.set('ouvindo');
+    await fixture.whenStable();
+    expect(elemento.querySelector('.leitura__instrucao')?.tagName).toBe('P');
+  });
+
+  it('abre no automático, que é a primeira opção da fileira de cordas', async () => {
+    const fixture = await montar();
+    const elemento = fixture.nativeElement as HTMLElement;
+
+    const primeiro = elemento.querySelector('.cordas > *');
+    expect(primeiro?.classList.contains('auto')).toBe(true);
+    expect(primeiro?.getAttribute('aria-pressed')).toBe('true');
+
+    elemento.querySelectorAll<HTMLButtonElement>('.corda')[1].click();
+    await fixture.whenStable();
+    expect(elemento.querySelector('.auto')?.getAttribute('aria-pressed')).toBe('false');
+
+    elemento.querySelector<HTMLButtonElement>('.auto')!.click();
+    await fixture.whenStable();
+    expect(elemento.querySelector('.auto')?.getAttribute('aria-pressed')).toBe('true');
+    expect(elemento.querySelector('.leitura__cifra')?.textContent?.trim()).toBe('–');
+  });
+
   it('recalcula as frequências ao calibrar o diapasão', async () => {
     const fixture = await montar();
     const elemento = fixture.nativeElement as HTMLElement;

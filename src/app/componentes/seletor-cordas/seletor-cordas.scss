@@ -10,7 +10,10 @@
 }
 
 .corda {
+  /* `min-width: 0` porque agora são sete itens na fileira: sem isso o
+     conteúdo segura a largura e a linha vaza no celular estreito. */
   flex: 1;
+  min-width: 0;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -88,48 +91,69 @@
   color: var(--acento);
 }
 
+/* O automático mora na fileira, com a mesma altura e o mesmo miolo em duas
+   linhas das cordas — só mais estreito, porque não carrega cifra. Fica na
+   frente por ser o caminho padrão: só quem quer mirar uma corda fixa passa
+   por ele. */
 .auto {
+  flex: 0 0 auto;
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 0.6rem;
-  width: 100%;
-  margin-top: clamp(0.4rem, 1.2vmin, 0.65rem);
-  padding: clamp(0.7rem, 1.7vmin, 0.9rem) 0.75rem;
+  gap: 0.1rem;
+  padding: clamp(0.6rem, 1.5vmin, 0.85rem) clamp(0.5rem, 1.4vmin, 0.75rem)
+    clamp(0.5rem, 1.3vmin, 0.7rem);
   border: 1px solid var(--traco);
-  border-radius: 1.25rem;
+  border-radius: 0.75rem;
   background: transparent;
   color: var(--texto-fraco);
   font: inherit;
-  font-size: clamp(0.82rem, 1.7vmin, 0.9rem);
-  font-variation-settings: 'wght' 640;
   transition:
     background-color 300ms var(--enfase),
+    border-color 250ms ease,
     color 200ms ease,
-    border-color 200ms ease,
-    border-radius 450ms var(--mola);
+    border-radius 500ms var(--mola),
+    transform 400ms var(--mola);
 }
 
-.auto__ponto {
-  width: 0.55rem;
-  height: 0.55rem;
-  border-radius: 50%;
-  background: var(--traco);
+.auto:active {
+  transform: scale(0.93);
+}
+
+.auto__brilho {
+  font-size: clamp(0.95rem, 2.2vmin, 1.15rem);
+  line-height: 1;
+  /* Desligado o brilho recua para um cinza: ele só acende quando a escolha da
+     corda está mesmo por conta do afinador. */
+  filter: grayscale(1);
+  opacity: 0.55;
   transition:
-    background-color 300ms ease,
-    transform 450ms var(--mola);
+    filter 300ms ease,
+    opacity 300ms ease,
+    transform 500ms var(--mola);
 }
 
+.auto__nome {
+  font-size: clamp(0.62rem, 1.3vmin, 0.72rem);
+  font-variation-settings: 'wght' 640;
+  opacity: 0.85;
+}
+
+/* Ligado, o automático não usa a cor da afinação — essa é da corda mirada.
+   Ele acende no recipiente alto, com o mesmo raio assimétrico que marca uma
+   escolha em vigor na fileira. */
 .auto--ligado {
   border-color: transparent;
+  border-radius: 1.4rem 0.5rem 1.4rem 0.5rem;
   background: var(--recipiente-alto);
-  border-radius: 1.7rem;
   color: var(--texto);
 }
 
-.auto--ligado .auto__ponto {
-  background: var(--acento);
-  transform: scale(1.55);
+.auto--ligado .auto__brilho {
+  filter: none;
+  opacity: 1;
+  transform: scale(1.12);
 }
 
 /* Celular deitado: cada milímetro vertical conta. */
@@ -139,7 +163,6 @@
   }
 
   .auto {
-    margin-top: 0.35rem;
-    padding: 0.45rem 0.75rem;
+    padding: 0.4rem 0.5rem 0.35rem;
   }
 }

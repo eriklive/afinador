@@ -179,7 +179,8 @@ export class App {
 
   /** Instrução principal mostrada abaixo da nota. */
   protected readonly instrucao = computed(() => {
-    if (!this.ouvindo()) return 'Ative o microfone para começar';
+    if (this.iniciando()) return 'Abrindo o microfone…';
+    if (!this.ouvindo()) return 'Ative o microfone';
     if (this.tocandoReferencia()) return 'Tocando a nota de referência';
 
     const desvio = this.desvio();

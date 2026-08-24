@@ -63,9 +63,24 @@
       </p>
     </app-medidor>
 
-    <p class="leitura__instrucao" [class.leitura__instrucao--afinado]="afinado()" role="status">
-      {{ instrucao() }}
-    </p>
+    @if (ouvindo()) {
+      <p class="leitura__instrucao" [class.leitura__instrucao--afinado]="afinado()" role="status">
+        {{ instrucao() }}
+      </p>
+    } @else {
+      <!-- Com o microfone desligado a instrução é a própria porta de entrada:
+           a pílula vira o botão que abre a escuta, no ponto da tela em que o
+           olho já está. -->
+      <button
+        type="button"
+        class="leitura__instrucao leitura__instrucao--acao"
+        [disabled]="iniciando()"
+        (click)="alternarMicrofone()"
+      >
+        <span class="leitura__microfone" aria-hidden="true">🎤</span>
+        {{ instrucao() }}
+      </button>
+    }
   </section>
 
   <div class="lateral">
@@ -105,21 +120,11 @@
       />
 
       <div class="acoes">
-        <button
-          type="button"
-          class="botao botao--principal"
-          [class.botao--parar]="ouvindo()"
-          [disabled]="iniciando()"
-          (click)="alternarMicrofone()"
-        >
-          @if (iniciando()) {
-            Abrindo o microfone…
-          } @else if (ouvindo()) {
+        @if (ouvindo()) {
+          <button type="button" class="botao botao--parar" (click)="alternarMicrofone()">
             Parar de ouvir
-          } @else {
-            Ativar microfone
-          }
-        </button>
+          </button>
+        }
 
         <button
           type="button"

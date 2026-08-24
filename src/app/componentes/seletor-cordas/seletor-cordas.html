@@ -1,4 +1,19 @@
-<div class="cordas">
+<div class="cordas" role="group" aria-label="Corda a afinar">
+  <!-- O automático é a primeira escolha da fileira, e não um interruptor à
+       parte: ele e as cordas respondem à mesma pergunta — quem o afinador
+       deve mirar agora. -->
+  <button
+    type="button"
+    class="auto"
+    [class.auto--ligado]="automatico()"
+    [attr.aria-pressed]="automatico()"
+    aria-label="Automático: o afinador acha a corda sozinho."
+    (click)="voltarParaAutomatico.emit()"
+  >
+    <span class="auto__brilho" aria-hidden="true">✨</span>
+    <span class="auto__nome">Auto</span>
+  </button>
+
   @for (corda of cordas(); track corda.id) {
     <button
       type="button"
@@ -21,14 +36,3 @@
     </button>
   }
 </div>
-
-<button
-  type="button"
-  class="auto"
-  [class.auto--ligado]="automatico()"
-  [attr.aria-pressed]="automatico()"
-  (click)="voltarParaAutomatico.emit()"
->
-  <span class="auto__ponto" aria-hidden="true"></span>
-  Detectar corda automaticamente
-</button>
