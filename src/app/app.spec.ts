@@ -1,5 +1,7 @@
+import { signal } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { App } from './app';
+import { Instalacao } from './nucleo/instalacao';
 import { Microfone } from './nucleo/microfone';
 
 /** Coloca o afinador ouvindo uma frequência, como se o microfone a tivesse pego. */
@@ -161,6 +163,16 @@ describe('App', () => {
       const raiz = fixture.nativeElement as HTMLElement;
       expect(raiz.style.getPropertyValue('--acento')).toBe('#c9bad3');
     });
+  });
+
+  it('mostra o convite de instalação quando o navegador o oferece', async () => {
+    const instalacao = { disponivel: signal(true), temConvite: signal(true) };
+    TestBed.overrideProvider(Instalacao, { useValue: instalacao as unknown as Instalacao });
+
+    const fixture = await montar();
+    const elemento = fixture.nativeElement as HTMLElement;
+
+    expect(elemento.querySelector('.instalar')?.textContent).toContain('Instalar');
   });
 
   it('mostra o instrumento pedido no seletor de afinações', async () => {

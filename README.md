@@ -14,6 +14,8 @@ pensado primeiro para o celular e publicado como página estática no GitHub Pag
 - **Toca a nota de referência** da corda alvo, para afinar de ouvido quando o ambiente está
   barulhento demais para o microfone.
 - **Calibra o diapasão** de 415 a 466 Hz, para tocar junto com um instrumento fora do 440.
+- **Instala no aparelho e funciona sem internet**: aberto pelo ícone, ele abre em tela cheia e
+  afina num porão de ensaio sem sinal.
 
 ### Afinações
 
@@ -96,11 +98,48 @@ recortadas com `fonttools` para o subconjunto latino e para a faixa de eixos que
 ```bash
 npm install
 npm start          # http://localhost:4200
-npm test           # 89 testes de unidade e de componente
+npm test           # 111 testes de unidade e de componente
 npm run build      # saída em dist/afinador/browser
 ```
 
 O microfone só é liberado pelo navegador em **contexto seguro**: `localhost` ou HTTPS.
+
+## App instalável e offline
+
+Um afinador é usado onde o instrumento está — e onde o instrumento está muitas vezes não há rede.
+Por isso o afinador é um app instalável: `public/manifest.webmanifest` descreve o nome, os ícones e
+a abertura em tela cheia, e um service worker guarda o app inteiro no aparelho.
+
+**O cache é integral, não parcial.** `ngsw-config.json` põe tudo em `prefetch` — HTML, JS, CSS,
+ícones e as duas fontes: 291 kB somados, dos quais 63 kB são as fontes. Meio app em cache não
+serviria de nada para quem já está sem rede, e é justamente a segunda visita — a do porão de
+ensaio — que precisa funcionar.
+
+**O registro é de produção e espera a tela estabilizar** (`app.config.ts`). Em `ng serve` o worker
+não é registrado: um worker grudado no `localhost` esconderia as mudanças em desenvolvimento. E no
+primeiro carregamento o que importa é abrir o microfone, não pré-carregar arquivos para a próxima
+visita — daí o `registerWhenStable`.
+
+**A instalação tem dois caminhos, e o navegador decide qual existe** (`nucleo/instalacao.ts`).
+Chrome, Edge e Samsung Internet disparam `beforeinstallprompt`; o app segura o evento — sem o
+`preventDefault` a faixa do Chrome cobriria justamente a parte de baixo da tela, onde estão as
+cordas — e devolve o convite no toque do botão, que é o gesto que o navegador exige. No iOS não
+existe evento nenhum: a instalação é um caminho manual no menu Compartilhar, e o que dá para fazer
+é ensinar o caminho. Quem já está no app instalado não vê nada disso.
+
+**Versão nova precisa de recarregamento** (`nucleo/atualizacao.ts`). Servido do cache, o afinador
+não veria uma publicação nova sozinho: o worker baixa a versão em segundo plano e o app avisa que
+ela está pronta. Trocar de versão sem recarregar deixaria a página misturando arquivos de duas
+publicações, cada um com o seu hash no nome — por isso o botão ativa a versão baixada e recarrega.
+Como um app instalado costuma voltar do segundo plano em vez de ser aberto de novo, ele também
+pergunta por versão nova quando a tela volta a ficar visível, no máximo uma vez por hora.
+
+Para conferir o offline de verdade é preciso a build de produção, servida em contexto seguro:
+
+```bash
+npm run build
+npx http-server dist/afinador/browser   # abra, recarregue e então corte a rede
+```
 
 ## Publicação
 

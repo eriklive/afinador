@@ -1,0 +1,72 @@
+:host {
+  display: contents;
+}
+
+/* Convite discreto: instalar é útil, mas não é o que a pessoa veio fazer aqui.
+   Como em toda a tela, o retorno ao toque é o raio, não uma sombra. */
+.instalar {
+  padding: 0.7rem 1rem;
+  border: 1px dashed var(--traco);
+  border-radius: 1rem;
+  background: transparent;
+  color: var(--texto-fraco);
+  font-size: 0.85rem;
+  font-variation-settings: 'wght' 600;
+  transition:
+    border-radius 350ms var(--mola),
+    background-color 200ms ease,
+    color 200ms ease;
+}
+
+.instalar:active {
+  border-radius: 0.6rem;
+  background: var(--recipiente-alto);
+  color: var(--texto);
+}
+
+.instalar__ajuda {
+  margin: 0;
+  padding: 0.75rem 1rem;
+  border-radius: 1rem;
+  background: var(--recipiente);
+  color: var(--texto-fraco);
+  font-size: 0.82rem;
+  line-height: 1.45;
+
+  strong {
+    color: var(--texto);
+    font-variation-settings: 'wght' 640;
+  }
+}
+
+/* A versão nova é um aviso, não um alarme: cor da interface, nunca o acento —
+   o acento pertence à afinação e só a ela. */
+.atualizar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding: 0.7rem 0.8rem 0.7rem 1rem;
+  border-radius: 1rem;
+  background: var(--primaria-recipiente);
+  color: var(--sobre-primaria-recipiente);
+  font-size: 0.85rem;
+  text-align: start;
+  transition:
+    border-radius 350ms var(--mola),
+    transform 350ms var(--mola);
+}
+
+.atualizar:active {
+  border-radius: 0.6rem;
+  transform: scale(0.98);
+}
+
+.atualizar__acao {
+  flex: none;
+  padding: 0.35rem 0.7rem;
+  border-radius: 999px;
+  background: var(--sobre-primaria-recipiente);
+  color: var(--sobre-primaria);
+  font-variation-settings: 'wght' 680;
+}

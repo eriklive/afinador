@@ -25,6 +25,7 @@ import {
   midiParaFrequencia,
 } from './nucleo/nota';
 import { TomReferencia } from './nucleo/tom-referencia';
+import { PainelInstalacao } from './componentes/instalacao/instalacao';
 import { Medidor } from './componentes/medidor/medidor';
 import { SeletorCordas, type CordaExibida } from './componentes/seletor-cordas/seletor-cordas';
 
@@ -40,7 +41,7 @@ interface CordaAlvo extends Corda {
 
 @Component({
   selector: 'app-root',
-  imports: [Medidor, SeletorCordas],
+  imports: [Medidor, PainelInstalacao, SeletorCordas],
   templateUrl: './app.html',
   styleUrl: './app.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

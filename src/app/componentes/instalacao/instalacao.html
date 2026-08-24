@@ -1,0 +1,25 @@
+@if (atualizacaoPronta()) {
+  <button type="button" class="atualizar" (click)="aplicarAtualizacao()">
+    <span>Nova versão do afinador pronta</span>
+    <span class="atualizar__acao">Atualizar</span>
+  </button>
+}
+
+@if (podeInstalar()) {
+  <button
+    type="button"
+    class="instalar"
+    [attr.aria-expanded]="instrucoesAbertas() || null"
+    (click)="instalar()"
+  >
+    Instalar no aparelho
+  </button>
+}
+
+@if (instrucoesAbertas()) {
+  <p class="instalar__ajuda">
+    No iPhone e no iPad a instalação é manual: toque em <strong>Compartilhar</strong> e depois em
+    <strong>Adicionar à Tela de Início</strong>. Instalado, o afinador abre em tela cheia e funciona
+    sem internet.
+  </p>
+}
