@@ -1,6 +1,7 @@
 import { Injectable, computed, signal } from '@angular/core';
 import { detectarFrequencia, type Leitura } from './detector-de-tom';
 import { SuavizadorDeTom } from './suavizador';
+import { TelaAcordada } from './tela-acordada';
 
 export type EstadoMicrofone =
   'parado' | 'iniciando' | 'ouvindo' | 'negado' | 'indisponivel' | 'erro';
@@ -49,6 +50,7 @@ export class Microfone {
   private grafo: AudioNode[] = [];
   private amostras = new Float32Array(TAMANHO_JANELA);
   private readonly suavizador = new SuavizadorDeTom();
+  private readonly tela = new TelaAcordada();
   private quadro = 0;
   private ultimaAnalise = 0;
   private ultimaValida = 0;
@@ -143,6 +145,7 @@ export class Microfone {
       this.ultimaAnalise = 0;
       this.ultimaValida = 0;
       this.estado.set('ouvindo');
+      this.tela.manter();
       this.agendar();
     } catch (erro) {
       await contexto.close().catch(() => undefined);
@@ -233,6 +236,7 @@ export class Microfone {
   }
 
   private encerrarAudio(): void {
+    this.tela.soltar();
     cancelAnimationFrame(this.quadro);
     this.quadro = 0;
     this.captura?.getTracks().forEach((faixa) => faixa.stop());
